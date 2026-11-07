@@ -1,13 +1,5 @@
 project_id = "ganh-xiec"
 
-[auth.email.template.invite]
-subject = "Bạn được mời vào Gánh Xiếc"
-content_path = "./templates/invite.html"
-
-[auth.email.template.recovery]
-subject = "Đặt lại mật khẩu Gánh Xiếc"
-content_path = "./templates/recovery.html"
-
 [functions.invitations]
 # The handler verifies the user JWT (issuer/audience) with @supabase/server.
 # Avoid the gateway legacy JWT check rejecting modern asymmetric signing keys.

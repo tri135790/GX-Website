@@ -1,4 +1,4 @@
-import { EmployeeApp } from './employee-app';
+'use client';
 import { useCallback, useEffect, useState } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { ShieldCheck, ChevronRight, ChevronLeft, ArrowUpRight, Clock3, Video, MapPin, Check, ArrowRight, CheckCircle2, Plus, Pencil } from 'lucide-react';
@@ -13,8 +13,6 @@ import { DirectoryPage } from './directory-page';
 import { HoursPanel } from './hours-panel';
 import { LessonForm, RecordForm, InviteForm } from './forms';
 import { Login, PasswordSetup } from './auth';
-import { ProfileSetup } from './profile-setup';
-import { accountDisplay } from '@/lib/gx/account-display';
 export default function AdminApp() {
     const [authSetup, setAuthSetup] = useState(false);
     const [data, setData] = useState<Data>(emptyData), [client, setClient] = useState<SupabaseClient | null>(null), [loading, setLoading] = useState(true), [demo, setDemo] = useState(false), [user, setUser] = useState<Profile | null>(null), [authenticated, setAuthenticated] = useState(false), [navId, setNav] = useState('calendar'), [toast, setToast] = useState(''), [error, setError] = useState(''), [busy, setBusy] = useState(false), [modal, setModal] = useState<{
@@ -26,7 +24,7 @@ export default function AdminApp() {
         setData(emptyData);
         return;
     } const { data: p, error: e } = await c.from('profiles').select('*').eq('id', u.id).maybeSingle(); if (e)
-        throw e; setUser(accountDisplay(p, u)); if (p?.active && p.role === 'admin')
+        throw e; setUser(p); if (p?.active && p.role === 'admin')
         setData(await loadData(c));
     else
         setData(emptyData); }, []);
@@ -96,8 +94,6 @@ export default function AdminApp() {
         return <PasswordSetup client={client} done={() => { setAuthSetup(false); window.history.replaceState(null, '', window.location.pathname); }}/>;
     if (!demo && !user)
         return <Login client={client} error={error} authenticated={authenticated}/>;
-    if (client && user?.active && user.onboarding_completed === false) return <ProfileSetup client={client} done={() => { window.location.assign(window.location.pathname); }} />;
-    if (user?.active && user.role === 'employee' && client) return <EmployeeApp client={client} user={user} />;
     if (user && (!user.active || user.role !== 'admin'))
         return <main className="login"><Brand /><div className="login-card"><ShieldCheck size={36}/><h1>{user.active ? 'Chào mừng đến Gánh Xiếc' : 'Tài khoản đã tạm khóa'}</h1><p>{user.active ? 'Khu vực dành cho giáo viên và phụ huynh sẽ được mở trong phiên bản tiếp theo.' : 'Vui lòng liên hệ quản trị viên.'}</p><button className="btn" onClick={() => client?.auth.signOut()}>Đăng xuất</button></div></main>;
     const LessonRows = ({ list }: {

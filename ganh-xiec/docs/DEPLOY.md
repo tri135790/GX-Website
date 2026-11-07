@@ -108,31 +108,21 @@ Tài liệu chính thức: [Vite + GitHub Pages](https://vite.dev/guide/static-d
 
 ## Lời mời mở thẳng trang đặt mật khẩu
 
-Luồng mới: email mời → trang `?auth=password&token_hash=...&type=invite` → trang tự gọi `verifyOtp` → nhập mật khẩu và xác nhận → điền thông tin cá nhân → vào website. Token nằm trên trang của mình để trình quét email không tiêu link bằng một request GET, và GitHub Pages không làm rơi fragment khi redirect. Trang đặt mật khẩu là một route giao diện riêng dùng query string để hoạt động trên GitHub Pages mà không cần server rewrite. Link hết hạn/đã sử dụng hiển thị lỗi và form yêu cầu link khôi phục mới, không âm thầm chuyển về đăng nhập. Link cũ còn fragment `#type=invite` hoặc `#type=recovery` vẫn được nhận.
+Luồng mới: email mời → Supabase xác thực link → `?auth=password` → nhập mật khẩu và xác nhận → vào website. Trang đặt mật khẩu là một route giao diện riêng dùng query string để hoạt động trên GitHub Pages mà không cần server rewrite. Link hết hạn/đã sử dụng hiển thị lỗi và form yêu cầu link khôi phục mới, không âm thầm chuyển về đăng nhập.
 
 Sau khi cập nhật code:
 
 1. Push frontend lên GitHub và chờ Actions deploy thành công.
 2. Supabase → Authentication → URL Configuration → Redirect URLs: thêm chính xác `https://tri135790.github.io/GX-Website/?auth=password`. Giữ Site URL là `https://tri135790.github.io/GX-Website/` và giữ các redirect URL cũ.
-3. Authentication → Email Templates: dán nội dung [`supabase/templates/invite.html`](../supabase/templates/invite.html) vào Invite user và [`supabase/templates/recovery.html`](../supabase/templates/recovery.html) vào Reset password. Nút phải là `{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=invite` (recovery dùng `type=recovery`). Không dùng `ConfirmationURL`: request GET tới link đó xác thực và tiêu token trước khi trang kịp mở. `RedirectTo` do function đặt là URL có dấu `/` cuối và `?auth=password`.
+3. Authentication → Email Templates → Invite user: nút chấp nhận phải dùng `<a href="{{ .ConfirmationURL }}">Chấp nhận lời mời và đặt mật khẩu</a>`. Không thay bằng SiteURL/RedirectTo hoặc URL GitHub trực tiếp vì sẽ bỏ qua xác thực. Reset Password cũng phải dùng ConfirmationURL.
 4. Deploy Edge Function mới từ thư mục `ganh-xiec`:
 
 ```sh
 npx supabase functions deploy invitations --project-ref passgmewpovbjybpyxko
 ```
 
-Giữ `APP_URL=https://tri135790.github.io/GX-Website/`; function tự thêm `?auth=password`. Bản hoàn thiện hồ sơ cần chạy migration `003_profile_onboarding.sql` trước khi deploy frontend.
+Giữ `APP_URL=https://tri135790.github.io/GX-Website/`; function tự thêm `?auth=password`. Không cần migration SQL.
 
 Thử bằng email mời mới. Link đã gửi trước đó không thay đổi theo deployment; link cũ còn hợp lệ có `type=invite` vẫn được frontend nhận diện. Với tài khoản đã xác thực nhưng chưa đặt mật khẩu, dùng Quên mật khẩu để gửi link mới thay vì xóa user hoặc mời lại.
 
 Kiểm thử cloud: mở link trên cửa sổ riêng không có phiên admin; xác nhận email đúng, nhập mật khẩu hai lần, lưu, đăng xuất rồi đăng nhập bằng mật khẩu mới. Nếu provider không có session hợp lệ, trang chỉ cho gửi lại liên kết, không cho đổi mật khẩu bằng query string đơn thuần.
-
-## Hoàn thiện hồ sơ sau lời mời
-
-Chạy `supabase/migrations/003_profile_onboarding.sql` một lần trước khi phát hành frontend (sau các migration đã áp dụng). Migration thêm họ tên dùng lại từ `profiles.name`, số điện thoại, địa chỉ và trạng thái hoàn thiện hồ sơ. Tài khoản đang có cũng được nhắc hoàn thiện hồ sơ ở lần đăng nhập tiếp theo.
-
-Cả ba vai trò admin, employee và parents đều đi qua: đặt mật khẩu → họ tên bắt buộc (tối đa 120 ký tự), điện thoại tùy chọn (30), địa chỉ tùy chọn (500) → lưu → vào website. Email và vai trò chỉ đọc. Tải lại trang ở bước hồ sơ vẫn giữ bước đó; người đăng nhập bình thường có hồ sơ chưa hoàn thiện cũng được đưa tới form. Quên mật khẩu sử dụng cùng luồng và điền sẵn thông tin đã có.
-
-RPC `complete_my_profile` chỉ cập nhật hồ sơ của `auth.uid()` đang active, không nhận ID, role hoặc liên kết nhân sự/phụ huynh từ client. Không sửa hồ sơ nghiệp vụ `employees`/`parents`; đây là thông tin tài khoản cá nhân. Tên tự nhập ưu tiên hơn tên từ Google. Mọi cập nhật được ghi audit.
-
-Kiểm tra local: `PGLITE_ROOT=/path/to/@electric-sql/pglite node tests/profile-database.mjs`. Nghiệm thu cloud bằng email mới cho từng vai trò: mở lời mời, xác nhận email đúng, đặt mật khẩu, điền thông tin, tải lại và kiểm tra tên/email; đăng xuất và đăng nhập lại. Kiểm tra tài khoản bị khóa và link hết hạn.

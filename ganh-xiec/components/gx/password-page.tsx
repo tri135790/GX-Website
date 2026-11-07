@@ -1,42 +1,34 @@
 import { useEffect, useState } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { connect, appUrl } from '@/lib/gx/client';
-import { passwordUrl, readAuthLink } from '@/lib/gx/auth-link';
-import { ProfileSetup } from './profile-setup';
+import { passwordUrl } from '@/lib/gx/auth-link';
 import { PasswordSetup } from './auth';
 import { Brand, Field } from './shared';
 
 export function PasswordPage({ invalidLink }: { invalidLink: boolean }) {
     const [client, setClient] = useState<SupabaseClient | null>(null);
-    const [state, setState] = useState<'loading' | 'ready' | 'invalid' | 'profile' | 'done'>('loading');
+    const [state, setState] = useState<'loading' | 'ready' | 'invalid' | 'done'>('loading');
     const [message, setMessage] = useState('');
     const [email, setEmail] = useState('');
     const [busy, setBusy] = useState(false);
     useEffect(() => {
         let live = true;
-        const link = readAuthLink(window.location.href);
         (async () => {
             try {
                 const c = await connect();
                 if (!live) return;
                 setClient(c);
                 if (!c) throw Error('Chưa cấu hình kết nối Supabase.');
-                if (link.tokenHash && link.otpType && !invalidLink) {
-                    const { data, error } = await c.auth.verifyOtp({ token_hash: link.tokenHash, type: link.otpType });
-                    if (error || !data.session) throw Error('Liên kết đã hết hạn, đã được sử dụng hoặc chưa được xác thực. Hãy yêu cầu liên kết mới bên dưới.');
-                } else {
-                    const { data, error } = await c.auth.getSession();
-                    if (invalidLink || error || !data.session) throw Error('Liên kết đã hết hạn, đã được sử dụng hoặc chưa được xác thực. Hãy yêu cầu liên kết mới bên dưới.');
-                }
+                // Wait for automatic callback verification/session initialization first.
+                const { data, error } = await c.auth.getSession();
+                if (invalidLink || error || !data.session) throw Error('Liên kết đã hết hạn, đã được sử dụng hoặc chưa được xác thực. Hãy yêu cầu liên kết mới bên dưới.');
                 const { data: identity, error: identityError } = await c.auth.getUser();
                 if (identityError || !identity.user) throw Error('Không xác thực được tài khoản. Hãy yêu cầu liên kết mới.');
                 if (!live) return;
                 setEmail(identity.user.email || '');
                 // Keep the dedicated route on refresh, remove credentials from the address bar.
-                const target = new URL(passwordUrl(appUrl()));
-                if (new URL(window.location.href).searchParams.get('step') === 'profile') target.searchParams.set('step', 'profile');
-                window.history.replaceState(null, '', target.href);
-                setState(new URL(window.location.href).searchParams.get('step') === 'profile' ? 'profile' : 'ready');
+                window.history.replaceState(null, '', passwordUrl(appUrl()));
+                setState('ready');
             } catch (error) {
                 if (live) {
                     setMessage(error instanceof Error ? error.message : 'Không mở được liên kết.');
@@ -46,10 +38,9 @@ export function PasswordPage({ invalidLink }: { invalidLink: boolean }) {
         })();
         return () => { live = false; };
     }, [invalidLink]);
-    if (state === 'ready' && client) return <PasswordSetup client={client} done={() => { const target = new URL(passwordUrl(appUrl())); target.searchParams.set('step', 'profile'); window.history.replaceState(null, '', target.href); setState('profile'); }} />;
-    if (state === 'profile' && client) return <ProfileSetup client={client} done={() => setState('done')} />;
+    if (state === 'ready' && client) return <PasswordSetup client={client} done={() => setState('done')} />;
     return <main className="login"><Brand /><div className="login-card">
-        <h1>{state === 'done' ? 'Đã hoàn tất hồ sơ' : 'Đặt mật khẩu mới'}</h1>
+        <h1>{state === 'done' ? 'Đã đặt mật khẩu' : 'Đặt mật khẩu mới'}</h1>
         {state === 'loading' ? <p role="status">Đang xác thực liên kết…</p> : state === 'done' ? <>
             <p>Bạn đã có thể sử dụng tài khoản {email}.</p>
             <a className="btn primary" href={appUrl()}>Vào website</a>

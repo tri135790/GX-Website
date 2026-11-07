@@ -1,6 +1,0 @@
-[    7731ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:5184/node_modules/.vite/deps/react-dom_client.js?v=4b49514a:14336
-[    7879ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "username"): (More info: https://goo.gl/9p2vKq) %o @ http://127.0.0.1:5184/:0
-[  781474ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:5184/node_modules/.vite/deps/react-dom_client.js?v=4b49514a:14336
-[  781601ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "username"): (More info: https://goo.gl/9p2vKq) %o @ http://127.0.0.1:5184/:0
-[  798601ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://127.0.0.1:5184/node_modules/.vite/deps/react-dom_client.js?v=4b49514a:14336
-[  798715ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "username"): (More info: https://goo.gl/9p2vKq) %o @ http://127.0.0.1:5184/:0

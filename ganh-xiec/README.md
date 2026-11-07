@@ -15,7 +15,7 @@ Mở http://localhost:5173. Khi chưa cấu hình Supabase, ứng dụng hiện 
 
 Xem hướng dẫn từng bước, kiểm thử và deploy trong [docs/DEPLOY.md](docs/DEPLOY.md).
 
-1. Database: chạy các migration 001, 002, 003 trong `supabase/migrations/` theo thứ tự, mỗi file một lần. Project đã có database chỉ chạy migration còn thiếu; 003 bổ sung hồ sơ cá nhân.
+1. Database: chạy migration `supabase/migrations/001_ganh_xiec.sql` một lần cho project mới. Nếu đã chạy, không chạy lại.
 2. Frontend: copy `.env.example` thành `.env.local`, điền `VITE_SUPABASE_URL` và `VITE_SUPABASE_PUBLISHABLE_KEY` (`sb_publishable_...`).
 3. Supabase Auth: cấu hình Site URL/Redirect URLs, OAuth và SMTP.
 4. Deploy Edge Function `invitations`, đặt `APP_URL` bằng URL website. Secret chỉ ở Supabase.
@@ -26,7 +26,7 @@ Xem [hướng dẫn deploy đầy đủ](docs/DEPLOY.md), gồm cả domain gố
 ### Tài khoản và mật khẩu
 
 - Email có profile không thể mời lại; admin chỉnh role/khóa trong Tài khoản.
-- Email mời xác thực tài khoản rồi mở trang đặt mật khẩu và xác nhận → nhập họ tên, số điện thoại, địa chỉ → hoàn tất. Áp dụng cho admin, employee và parents. Tên tự nhập được dùng trong giao diện tài khoản.
+- Email mời mở ứng dụng để xác thực. Người dùng có thể dùng “Quên mật khẩu” để đặt mật khẩu sau khi xác thực, hoặc đăng nhập Google/Facebook cùng email.
 - Nếu Supabase từ chối gửi lại vì danh tính Auth đã tồn tại nhưng chưa có profile, quản trị viên cần kiểm tra danh tính đó trong Supabase Dashboard, xác minh tình trạng và gửi lại email xác thực/khôi phục. Endpoint trả lỗi rõ ràng, không báo gửi thành công giả.
 - Employee/parents chỉ có màn hình chào; chỉ đọc profile của chính họ. UI và quyền truy cập hồ sơ của các role đó sẽ được làm ở giai đoạn sau.
 

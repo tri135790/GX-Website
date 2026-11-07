@@ -3,13 +3,6 @@ import { z } from 'npm:zod@3.25.76';
 const schema=z.object({action:z.enum(['invite','revoke']),id:z.string().uuid().optional(),email:z.string().email().optional(),role:z.enum(['admin','employee','parents']).optional(),employee_id:z.string().uuid().nullable().optional(),parent_id:z.string().uuid().nullable().optional()});
 
 const origin = Deno.env.get('APP_URL');
-function passwordRedirect(base: string) {
- const redirect = new URL(base);
- if (!redirect.pathname.endsWith('/')) redirect.pathname += '/';
- redirect.hash = '';
- redirect.searchParams.set('auth', 'password');
- return redirect.href;
-}
 const url = Deno.env.get('SUPABASE_URL');
 export default {
  fetch: withSupabase({
@@ -35,7 +28,10 @@ export default {
  const {data:existing}=await service.from('profiles').select('id').ilike('email',email).maybeSingle();if(existing)return Response.json({error:'Email đã có tài khoản; hãy chỉnh quyền trong danh sách tài khoản.'},{status:409});
  const {error:revokeError}=await service.from('invitations').update({status:'revoked'}).ilike('email',email).eq('status','pending');if(revokeError)return Response.json({error:revokeError.message},{status:400});
  const {data:inv,error}=await service.from('invitations').insert({email,role:body.role,employee_id:body.role==='employee'?body.employee_id:null,parent_id:body.role==='parents'?body.parent_id:null,expires_at:new Date(Date.now()+7*86400000).toISOString()}).select('id').single();if(error)return Response.json({error:error.message},{status:400});
- const sent=await service.auth.admin.inviteUserByEmail(email,{redirectTo:passwordRedirect(origin)});
+ const redirect = new URL(origin);
+ redirect.searchParams.set('auth', 'password');
+ redirect.hash = '';
+ const sent=await service.auth.admin.inviteUserByEmail(email,{redirectTo:redirect.href});
  if(sent.error){await service.from('invitations').update({status:'revoked'}).eq('id',inv.id);return Response.json({error:'Chưa gửi được email. Kiểm tra SMTP và trạng thái tài khoản trong Supabase. '+sent.error.message},{status:502});}
  await service.from('audit_log').insert({actor:ctx.userClaims!.id,entity:'invitations',record_id:inv.id,operation:'SEND_INVITATION',after_data:{email,role:body.role}});
  return Response.json({ok:true});
