@@ -7,3 +7,16 @@
 /* Keep calendar text readable; narrow weekly grids scroll within the panel. */
 .calendar-canvas{overflow-x:auto;max-width:100%}.calendar-grid .fc{min-width:720px}.calendar-event strong{font-size:13px}.calendar-event small,.calendar-event>span{font-size:12px}.fc .fc-timegrid-event .calendar-event strong{font-size:13px}.fc .fc-timegrid-event .calendar-event small,.fc .fc-timegrid-event .calendar-event>span{font-size:12px}
 @media(min-width:701px) and (max-width:900px){.sidebar{transform:translateX(-100%);width:225px}.sidebar.open{transform:translateX(0)}.sidebar-brand{display:flex;align-items:center;justify-content:space-between}.mobile-toggle{display:inline-flex}.nav-scrim{display:block;position:fixed;inset:0;border:0;background:#14291e66;z-index:35}.main-shell{margin-left:0}.mobile-bar{display:flex;align-items:center;gap:8px;height:48px;padding:0 15px;border-bottom:1px solid var(--line);background:white;font-size:13px}}
+
+.employee-note { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.user-box > div { min-width: 0; }
+.user-box .account-email { display: block; overflow-wrap: anywhere; }
+
+.employee-panel { padding: 20px; display: grid; gap: 14px; margin-top: 16px; min-width: 0; }
+.employee-panel ul { margin: 0; padding-left: 20px; }
+.employee-list { padding: 0 16px; }
+.employee-list .task-row { width: 100%; flex-wrap: wrap; }
+.employee-history { flex-wrap: wrap; }
+.employee-panel .task-row { gap: 12px; flex-wrap: wrap; }
+@media(max-width:700px) { .employee-panel { padding: 16px; } .employee-list .task-row { align-items: flex-start; flex-direction: column; gap: 6px; } }
