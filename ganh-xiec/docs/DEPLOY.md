@@ -105,3 +105,24 @@ npm run preview
 Tests Edge Function chạy handler thật với JWT ký trong test và upstream Supabase giả lập, kiểm tra từ chối anonymous/token sai/non-admin/admin bị khóa, revoke, gửi email và lỗi SMTP. Các test không gửi email hoặc gọi database thật. Kiểm thử cloud/SMTP/OAuth thực tế vẫn cần cấu hình project của bạn.
 
 Tài liệu chính thức: [Vite + GitHub Pages](https://vite.dev/guide/static-deploy), [Supabase redirect URLs](https://supabase.com/docs/guides/auth/redirect-urls), [SMTP](https://supabase.com/docs/guides/auth/auth-smtp).
+
+## Lời mời mở thẳng trang đặt mật khẩu
+
+Luồng mới: email mời → Supabase xác thực link → `?auth=password` → nhập mật khẩu và xác nhận → vào website. Trang đặt mật khẩu là một route giao diện riêng dùng query string để hoạt động trên GitHub Pages mà không cần server rewrite. Link hết hạn/đã sử dụng hiển thị lỗi và form yêu cầu link khôi phục mới, không âm thầm chuyển về đăng nhập.
+
+Sau khi cập nhật code:
+
+1. Push frontend lên GitHub và chờ Actions deploy thành công.
+2. Supabase → Authentication → URL Configuration → Redirect URLs: thêm chính xác `https://tri135790.github.io/GX-Website/?auth=password`. Giữ Site URL là `https://tri135790.github.io/GX-Website/` và giữ các redirect URL cũ.
+3. Authentication → Email Templates → Invite user: nút chấp nhận phải dùng `<a href="{{ .ConfirmationURL }}">Chấp nhận lời mời và đặt mật khẩu</a>`. Không thay bằng SiteURL/RedirectTo hoặc URL GitHub trực tiếp vì sẽ bỏ qua xác thực. Reset Password cũng phải dùng ConfirmationURL.
+4. Deploy Edge Function mới từ thư mục `ganh-xiec`:
+
+```sh
+npx supabase functions deploy invitations --project-ref passgmewpovbjybpyxko
+```
+
+Giữ `APP_URL=https://tri135790.github.io/GX-Website/`; function tự thêm `?auth=password`. Không cần migration SQL.
+
+Thử bằng email mời mới. Link đã gửi trước đó không thay đổi theo deployment; link cũ còn hợp lệ có `type=invite` vẫn được frontend nhận diện. Với tài khoản đã xác thực nhưng chưa đặt mật khẩu, dùng Quên mật khẩu để gửi link mới thay vì xóa user hoặc mời lại.
+
+Kiểm thử cloud: mở link trên cửa sổ riêng không có phiên admin; xác nhận email đúng, nhập mật khẩu hai lần, lưu, đăng xuất rồi đăng nhập bằng mật khẩu mới. Nếu provider không có session hợp lệ, trang chỉ cho gửi lại liên kết, không cho đổi mật khẩu bằng query string đơn thuần.

@@ -1,3 +1,4 @@
+import { passwordUrl } from '@/lib/gx/auth-link';
 import { appUrl } from '@/lib/gx/client';
 import { useState, useEffect } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
@@ -13,7 +14,7 @@ export function Login({ client, error, authenticated }: {
     setMessage(error.message); }; const submit = async (e: React.FormEvent) => { e.preventDefault(); if (!client)
     return; setBusy(true); setMessage(''); try {
     if (mode === 'reset') {
-        const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo: appUrl() });
+        const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo: passwordUrl(appUrl()) });
         if (error)
             throw error;
         setMessage('Nếu email hợp lệ, bạn sẽ nhận được hướng dẫn đặt lại mật khẩu.');
@@ -40,7 +41,31 @@ finally {
 export function PasswordSetup({ client, done }: {
     client: SupabaseClient;
     done: () => void;
-}) { const [password, setPassword] = useState(''), [message, setMessage] = useState(''), [busy, setBusy] = useState(false); return <main className="login"><Brand /><div className="login-card"><h1>Đặt mật khẩu</h1><p>Hoàn tất xác thực tài khoản Gánh Xiếc.</p><form className="form" onSubmit={async (e) => { e.preventDefault(); setBusy(true); const { error } = await client.auth.updateUser({ password }); setBusy(false); if (error)
-    setMessage(error.message);
-else
-    done(); }}><Field label="Mật khẩu mới (tối thiểu 8 ký tự)"><input type="password" autoComplete="new-password" minLength={8} required value={password} onChange={e => setPassword(e.target.value)}/></Field>{message && <div className="error">{message}</div>}<button className="btn primary" disabled={busy}>Lưu mật khẩu</button></form></div></main>; }
+}) {
+    const [password, setPassword] = useState('');
+    const [confirmation, setConfirmation] = useState('');
+    const [message, setMessage] = useState('');
+    const [busy, setBusy] = useState(false);
+    return <main className="login"><Brand /><div className="login-card">
+        <h1>Đặt mật khẩu mới</h1>
+        <p>Tạo mật khẩu riêng để đăng nhập Gánh Xiếc.</p>
+        <form className="form" onSubmit={async e => {
+            e.preventDefault();
+            setMessage('');
+            if (password !== confirmation) { setMessage('Hai mật khẩu chưa khớp.'); return; }
+            setBusy(true);
+            try {
+                const { error } = await client.auth.updateUser({ password });
+                if (error) throw error;
+                done();
+            } catch (error) {
+                setMessage(error instanceof Error ? error.message : 'Không lưu được mật khẩu. Vui lòng thử lại.');
+            } finally { setBusy(false); }
+        }}>
+            <Field label="Mật khẩu mới (tối thiểu 8 ký tự)"><input type="password" autoComplete="new-password" minLength={8} required value={password} onChange={e => setPassword(e.target.value)} /></Field>
+            <Field label="Nhập lại mật khẩu mới"><input type="password" autoComplete="new-password" minLength={8} required value={confirmation} aria-invalid={!!message && password !== confirmation} onChange={e => setConfirmation(e.target.value)} /></Field>
+            {message && <div className="error" role="alert">{message}</div>}
+            <button className="btn primary" disabled={busy}>{busy ? 'Đang lưu…' : 'Lưu mật khẩu'}</button>
+        </form>
+    </div></main>;
+}

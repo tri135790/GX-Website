@@ -58,7 +58,7 @@ test('invitation Edge Function authenticates users and enforces active admin', a
     await t.test('invitation uses configured redirect and records audit', async () => {
       assert.equal((await invoke(token, { action: 'invite', email: 'parent@example.com', role: 'admin' })).status, 200);
       const sent = calls.find(c => c.path.endsWith('/invite'));
-      assert.equal(new URL(sent.url).searchParams.get('redirect_to'), env.APP_URL);
+      assert.equal(new URL(sent.url).searchParams.get('redirect_to'), `${env.APP_URL}?auth=password`);
       assert.ok(calls.some(c => c.path.endsWith('/audit_log')));
     });
     await t.test('SMTP failure revokes newly created invitation', async () => {
