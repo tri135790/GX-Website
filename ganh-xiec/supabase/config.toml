@@ -1,0 +1,6 @@
+project_id = "ganh-xiec"
+
+[functions.invitations]
+# The handler verifies the user JWT (issuer/audience) with @supabase/server.
+# Avoid the gateway legacy JWT check rejecting modern asymmetric signing keys.
+verify_jwt = false

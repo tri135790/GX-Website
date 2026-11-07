@@ -1,6 +1,6 @@
 # Gánh Xiếc — Không gian quản trị
 
-Website quản lý lịch dạy 1–1, nhân sự, học sinh, phụ huynh và tiến trình tuần. React/TypeScript, Vinext, FullCalendar và Supabase PostgreSQL/Auth.
+Website quản lý lịch dạy 1–1, nhân sự, học sinh, phụ huynh và tiến trình tuần. React/TypeScript, Vite, FullCalendar và Supabase PostgreSQL/Auth.
 
 ## Chạy local
 
@@ -15,15 +15,13 @@ Mở http://localhost:5173. Khi chưa cấu hình Supabase, ứng dụng hiện 
 
 Xem hướng dẫn từng bước, kiểm thử và deploy trong [docs/DEPLOY.md](docs/DEPLOY.md).
 
-1. Tạo một project Supabase mới. Không dùng project đang chứa hệ thống khác: migration thiết lập quyền cho các bảng của ứng dụng.
-2. Trong SQL Editor, chạy `supabase/migrations/001_ganh_xiec.sql` một lần. File tạo bảng, RLS, transaction RPC, ràng buộc lịch và audit.
-3. Sao chép `.env.example` thành `.dev.vars` và đặt URL cùng anon/publishable key. Đặt service-role/secret key **chỉ ở server**. Không commit file môi trường và không đưa secret vào frontend.
-4. Đặt `APP_URL` bằng địa chỉ website (local là http://localhost:5173). Trong Supabase Auth URL Configuration, cấu hình Site URL và allowlist redirect đúng origin local/production.
-5. Cấu hình SMTP riêng trong Supabase Auth để gửi email mời/khôi phục. Bản ghi lời mời ứng dụng hết hạn sau 7 ngày; link email có thời hạn riêng theo Email OTP Expiration của Supabase (mặc định 1 giờ). Các cơ chế chống spam và rate limits vẫn do Supabase quản lý.
-6. Bật Google provider, nhập client ID/secret từ Google Cloud. Thêm callback do Supabase cấp vào Google. Làm tương tự với Facebook/Meta, cấu hình quyền email và chuyển app sang trạng thái cho phép người dùng mục tiêu đăng nhập. Website chỉ xác nhận OAuth hoạt động sau khi kiểm thử trên provider thật.
-7. Đăng nhập bằng Google với **tranthanhtrivn@gmail.com** đã xác minh. Trigger database cấp admin lần đầu đúng một lần. Nếu dùng email/mật khẩu, mời email này từ Supabase Auth Dashboard, đặt mật khẩu và xác minh email. Không tạo user có `email_confirmed_at` bằng dữ liệu giả trong production.
-8. Các tài khoản khác phải có lời mời hợp lệ. Một danh tính Supabase Auth không có lời mời có thể được tạo bởi OAuth nhưng **không có profile ứng dụng và không được đọc dữ liệu**. Không tự gán role từ user metadata.
-9. Trên Sites, lưu các biến `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `APP_URL` bằng công cụ quản lý environment của Sites rồi deploy lại. Không lưu secret trong hosting manifest.
+1. Database: chạy migration `supabase/migrations/001_ganh_xiec.sql` một lần cho project mới. Nếu đã chạy, không chạy lại.
+2. Frontend: copy `.env.example` thành `.env.local`, điền `VITE_SUPABASE_URL` và `VITE_SUPABASE_PUBLISHABLE_KEY` (`sb_publishable_...`).
+3. Supabase Auth: cấu hình Site URL/Redirect URLs, OAuth và SMTP.
+4. Deploy Edge Function `invitations`, đặt `APP_URL` bằng URL website. Secret chỉ ở Supabase.
+5. GitHub: thêm hai variables công khai như bước 2, chọn Pages → GitHub Actions, push `main`. Workflow đã có sẵn.
+
+Xem [hướng dẫn deploy đầy đủ](docs/DEPLOY.md), gồm cả domain gốc và project path.
 
 ### Tài khoản và mật khẩu
 

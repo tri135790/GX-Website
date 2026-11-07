@@ -44,3 +44,9 @@ yarn-error.log*
 # OS metadata
 .DS_Store
 !.env.example
+
+/.node_modules-icloud-backup/
+/supabase/.temp/
+
+/.playwright-cli/
+/output/

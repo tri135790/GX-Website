@@ -19,7 +19,7 @@ export function LessonForm({ record, data, save, busy }: {
         e.preventDefault();
         setLocalError('');
         try {
-            let lesson = { ...f, actual_minutes: f.status === 'completed' ? Number(f.actual_minutes) : 0 };
+            const lesson = { ...f, actual_minutes: f.status === 'completed' ? Number(f.actual_minutes) : 0 };
             let list: Lesson[] = [lesson];
             if (repeat && !record?.id) {
                 if (!days.length)
@@ -108,13 +108,13 @@ export function InviteForm({ record, data, client, onDone }: {
     setError('Cần kết nối Supabase và cấu hình email trước khi gửi lời mời thật.');
     return;
 } setBusy(true); setError(''); try {
-    const { data: { session } } = await client.auth.getSession();
-    const r = await fetch('/api/invitations', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session?.access_token}` }, body: JSON.stringify({ action, id: record?.id, email: f.email, role: f.role, employee_id: f.employee_id, parent_id: f.parent_id }) });
-    const out = await r.json() as {
-        error?: string;
-    };
-    if (!r.ok)
-        throw Error(out.error);
+    const { error: invokeError } = await client.functions.invoke('invitations', {
+        body: { action, id: record?.id, email: f.email, role: f.role, employee_id: f.employee_id, parent_id: f.parent_id },
+    });
+    if (invokeError) {
+        const details = await invokeError.context?.json?.().catch(() => null);
+        throw Error(details?.error || details?.message || invokeError.message);
+    }
     await onDone();
 }
 catch (e: any) {

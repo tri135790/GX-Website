@@ -1,4 +1,4 @@
-'use client';
+import { appUrl } from '@/lib/gx/client';
 import { useState, useEffect } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { ArrowRight } from 'lucide-react';
@@ -9,11 +9,11 @@ export function Login({ client, error, authenticated }: {
     authenticated: boolean;
 }) { const [email, setEmail] = useState(''), [password, setPassword] = useState(''), [message, setMessage] = useState(error), [busy, setBusy] = useState(false), [mode, setMode] = useState<'login' | 'reset' | 'setPassword'>('login'); useEffect(() => { if (window.location.hash.includes('type=recovery') || window.location.hash.includes('type=invite'))
     setMode('setPassword'); }, []); const oauth = async (provider: 'google' | 'facebook') => { if (!client)
-    return; const { error } = await client.auth.signInWithOAuth({ provider, options: { redirectTo: window.location.origin } }); if (error)
+    return; const { error } = await client.auth.signInWithOAuth({ provider, options: { redirectTo: appUrl() } }); if (error)
     setMessage(error.message); }; const submit = async (e: React.FormEvent) => { e.preventDefault(); if (!client)
     return; setBusy(true); setMessage(''); try {
     if (mode === 'reset') {
-        const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+        const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo: appUrl() });
         if (error)
             throw error;
         setMessage('Nếu email hợp lệ, bạn sẽ nhận được hướng dẫn đặt lại mật khẩu.');
