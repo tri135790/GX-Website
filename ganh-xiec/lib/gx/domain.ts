@@ -1,0 +1,13 @@
+import type { Lesson } from './types';
+export const TZ = 'Asia/Ho_Chi_Minh';
+export function localDate(d: Date | string = new Date()): string { return new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(d)); }
+export function addDays(day: string, n: number): string { const d = new Date(day+'T12:00:00+07:00'); d.setUTCDate(d.getUTCDate()+n); return localDate(d); }
+export function monday(day: string = localDate()): string { const d = new Date(day+'T12:00:00+07:00'); return addDays(day,-((d.getUTCDay()+6)%7)); }
+export function timeText(s: string): string { return new Intl.DateTimeFormat('vi-VN',{timeZone:TZ,hour:'2-digit',minute:'2-digit'}).format(new Date(s)); }
+export function dateText(s: string): string { return new Intl.DateTimeFormat('vi-VN',{timeZone:TZ,day:'2-digit',month:'2-digit'}).format(new Date(s.length===10?s+'T12:00:00+07:00':s)); }
+export function minutes(l: Lesson): number { return Math.round((Date.parse(l.ends_at)-Date.parse(l.starts_at))/60000); }
+export function totals(list: Lesson[]) { return list.reduce((a,l)=>{if(l.status!=='cancelled') a.planned+=minutes(l); if(l.status==='completed') {a.actual+=l.actual_minutes;a[l.mode]+=l.actual_minutes;} return a;},{planned:0,actual:0,online:0,offline:0}); }
+export function hours(m: number): string { return (m/60).toLocaleString('vi-VN',{maximumFractionDigits:1}); }
+export function overlaps(a: Lesson,b: Lesson): boolean { return a.id!==b.id&&a.status!=='cancelled'&&b.status!=='cancelled'&&(a.employee_id===b.employee_id||a.student_id===b.student_id)&&Date.parse(a.starts_at)<Date.parse(b.ends_at)&&Date.parse(b.starts_at)<Date.parse(a.ends_at); }
+export function validateLesson(l: Lesson, list: Lesson[]) { if(!l.employee_id||!l.student_id) throw Error('Vui lòng chọn giáo viên và học sinh.'); if(!Number.isFinite(Date.parse(l.starts_at))||!Number.isFinite(Date.parse(l.ends_at))||minutes(l)<=0) throw Error('Giờ kết thúc phải sau giờ bắt đầu.'); if(!l.location.trim()) throw Error('Vui lòng nhập địa điểm hoặc link học.'); if(l.status==='completed' && (l.actual_minutes<=0||!Number.isInteger(l.actual_minutes))) throw Error('Nhập số phút thực dạy nguyên dương.'); if((l.status==='cancelled'||l.status==='absent'||(l.status==='completed'&&l.actual_minutes!==minutes(l)))&&!l.reason.trim()) throw Error('Vui lòng nhập lý do hủy, vắng hoặc điều chỉnh giờ.'); if(list.some(x=>overlaps(l,x))) throw Error('Giáo viên hoặc học sinh đã có lịch trùng giờ.'); }
+export function inRange(l: Lesson, start: string, endExclusive: string) { const date=localDate(l.starts_at); return date>=start&&date<endExclusive; }
