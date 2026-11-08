@@ -55,3 +55,5 @@ Test domain kiểm tra mốc tuần theo Việt Nam, cộng giờ và trùng l�
 Tách project thử nghiệm và production. Chọn chính sách backup phù hợp gói Supabase, xuất backup trước migration và thử khôi phục vào project thử nghiệm trước khi nhập hồ sơ thật. Kiểm tra lỗi đăng nhập/gửi email trong Supabase Logs; audit nghiệp vụ nằm trong `audit_log`, chỉ admin được đọc. App không ghi token hoặc ghi chú học sinh vào console.
 
 Bản đầu tải toàn bộ dữ liệu admin theo từng trang 1.000 hàng; phù hợp triển khai ban đầu. Khi dữ liệu lớn, chuyển lịch/hồ sơ sang truy vấn theo khoảng ngày và phân trang UI trước khi mở rộng sử dụng.
+
+Trang Employee và hướng dẫn cập nhật database: [docs/EMPLOYEE.md](docs/EMPLOYEE.md).

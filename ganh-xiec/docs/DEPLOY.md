@@ -126,3 +126,11 @@ Giữ `APP_URL=https://tri135790.github.io/GX-Website/`; function tự thêm `?a
 Thử bằng email mời mới. Link đã gửi trước đó không thay đổi theo deployment; link cũ còn hợp lệ có `type=invite` vẫn được frontend nhận diện. Với tài khoản đã xác thực nhưng chưa đặt mật khẩu, dùng Quên mật khẩu để gửi link mới thay vì xóa user hoặc mời lại.
 
 Kiểm thử cloud: mở link trên cửa sổ riêng không có phiên admin; xác nhận email đúng, nhập mật khẩu hai lần, lưu, đăng xuất rồi đăng nhập bằng mật khẩu mới. Nếu provider không có session hợp lệ, trang chỉ cho gửi lại liên kết, không cho đổi mật khẩu bằng query string đơn thuần.
+
+## Hồ sơ cá nhân sau lời mời
+
+Chạy migration `supabase/migrations/003_profile_onboarding.sql` một lần sau 001, trước khi deploy frontend. Migration này không phụ thuộc 002. Sau khi mở email mời và xác thực, người dùng đặt mật khẩu, rồi nhập họ tên (bắt buộc), số điện thoại và địa chỉ (tùy chọn). Áp dụng cho admin, employee và parents. Email và vai trò chỉ đọc.
+
+Tài khoản hiện có được nhắc hoàn thiện thông tin ở lần đăng nhập tiếp theo. RPC `complete_my_profile` chỉ sửa hồ sơ của người đang đăng nhập và còn active; không nhận ID, quyền hoặc hồ sơ liên kết từ client. Thông tin cá nhân lưu vào `profiles`, không thay đổi hồ sơ nghiệp vụ `employees`/`parents`. Tên tự nhập được ưu tiên hiển thị.
+
+Giữ cấu hình Redirect URLs chứa `?auth=password` như hướng dẫn trên. Email dùng ConfirmationURL để xác thực trước khi chuyển về website. Kiểm thử bằng email mới ở từng vai trò; xác nhận mật khẩu mới, tên/email và thông tin vẫn đúng sau tải lại và đăng nhập lại.

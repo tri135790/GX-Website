@@ -38,9 +38,10 @@ catch (e: any) {
 finally {
     setBusy(false);
 } }; return <main className="login"><Brand /><div className="login-card"><h1>{authenticated ? 'Chào mừng bạn' : 'Chào mừng trở lại'}</h1><p>{authenticated ? 'Tài khoản chưa có lời mời hợp lệ. Vui lòng liên hệ admin để được cấp quyền.' : 'Đăng nhập bằng tài khoản được mời.'}</p>{message && <div className="notice" role="status">{message}</div>}{authenticated ? <button className="btn" onClick={() => client?.auth.signOut()}>Đăng xuất</button> : <><div className="social-buttons"><button className="btn" disabled={!client} onClick={() => oauth('google')}><strong className="google-g">G</strong> Tiếp tục với Google</button><button className="btn" disabled={!client} onClick={() => oauth('facebook')}><strong className="facebook-f">f</strong> Tiếp tục với Facebook</button></div><div className="or"><span>hoặc dùng email được mời</span></div><form className="form" onSubmit={submit}>{mode !== 'setPassword' && <Field label="Email"><input required type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="email@example.com"/></Field>}{mode !== 'reset' && <Field label="Mật khẩu"><input required minLength={8} type="password" autoComplete={mode === 'setPassword' ? 'new-password' : 'current-password'} value={password} onChange={e => setPassword(e.target.value)}/></Field>}<button className="btn primary" disabled={!client || busy}>{busy ? 'Đang xử lý…' : mode === 'reset' ? 'Gửi hướng dẫn' : mode === 'setPassword' ? 'Đặt mật khẩu' : 'Đăng nhập'}<ArrowRight size={16}/></button><button type="button" className="text-button" onClick={() => setMode(mode === 'login' ? 'reset' : 'login')}>{mode === 'login' ? 'Quên mật khẩu?' : 'Quay lại đăng nhập'}</button></form></>}<small>Chỉ dành cho thành viên được Gánh Xiếc mời tham gia.</small></div></main>; }
-export function PasswordSetup({ client, done }: {
+export function PasswordSetup({ client, done, email }: {
     client: SupabaseClient;
     done: () => void;
+    email?: string;
 }) {
     const [password, setPassword] = useState('');
     const [confirmation, setConfirmation] = useState('');
@@ -49,6 +50,7 @@ export function PasswordSetup({ client, done }: {
     return <main className="login"><Brand /><div className="login-card">
         <h1>Đặt mật khẩu mới</h1>
         <p>Tạo mật khẩu riêng để đăng nhập Gánh Xiếc.</p>
+        {email && <p>{email}</p>}
         <form className="form" onSubmit={async e => {
             e.preventDefault();
             setMessage('');
