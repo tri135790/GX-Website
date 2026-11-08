@@ -18,3 +18,5 @@
 .employee-history { flex-wrap: wrap; }
 .employee-panel .task-row { gap: 12px; flex-wrap: wrap; }
 @media(max-width:700px) { .employee-panel { padding: 16px; } .employee-list .task-row { align-items: flex-start; flex-direction: column; gap: 6px; } }
+
+.family-update { border-top: 1px solid var(--line); padding-top: 16px; min-width: 0; }
