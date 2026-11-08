@@ -134,3 +134,16 @@ Chạy migration `supabase/migrations/003_profile_onboarding.sql` một lần sa
 Tài khoản hiện có được nhắc hoàn thiện thông tin ở lần đăng nhập tiếp theo. RPC `complete_my_profile` chỉ sửa hồ sơ của người đang đăng nhập và còn active; không nhận ID, quyền hoặc hồ sơ liên kết từ client. Thông tin cá nhân lưu vào `profiles`, không thay đổi hồ sơ nghiệp vụ `employees`/`parents`. Tên tự nhập được ưu tiên hiển thị.
 
 Giữ cấu hình Redirect URLs chứa `?auth=password` như hướng dẫn trên. Email dùng ConfirmationURL để xác thực trước khi chuyển về website. Kiểm thử bằng email mới ở từng vai trò; xác nhận mật khẩu mới, tên/email và thông tin vẫn đúng sau tải lại và đăng nhập lại.
+
+### Lỗi 404 khi lưu hồ sơ lần đầu
+
+Triệu chứng: form thông tin cá nhân báo không lưu được, Network có `POST /rest/v1/rpc/complete_my_profile` trả `404` với mã `PGRST202` ("Could not find the function ... in the schema cache"). Nguyên nhân là migration 003 chưa được chạy trên project đang kết nối, không phải lỗi frontend.
+
+Cách xử lý:
+
+1. Supabase Dashboard → SQL Editor của đúng project (kiểm tra `VITE_SUPABASE_URL` trong `.env.local` hoặc biến GitHub Actions).
+2. Dán toàn bộ `supabase/migrations/003_profile_onboarding.sql` và Run **một lần**. Migration chỉ thêm cột và function, không sửa dữ liệu hiện có.
+3. Kiểm tra: `select proname from pg_proc where proname = 'complete_my_profile';` phải có một dòng.
+4. Nếu vẫn 404, chạy `notify pgrst, 'reload schema';` rồi tải lại trang và lưu lại.
+
+Không chạy lại 001/002 nếu đã áp dụng. Migration 003 độc lập với 002; project chưa bật giao diện Employee vẫn cần 003 để hoàn tất hồ sơ sau lời mời.

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Profile } from '@/lib/gx/types';
 import { accountDisplay } from '@/lib/gx/account-display';
+import { errorMessage } from '@/lib/gx/errors';
 import { Brand, Field } from './shared';
 
 export function ProfileSetup({ client, done }: { client: SupabaseClient; done: () => void }) {
@@ -28,7 +29,7 @@ export function ProfileSetup({ client, done }: { client: SupabaseClient; done: (
                 setProfile(current); setName(current.name === current.email ? '' : current.name);
                 setPhone(current.phone ?? ''); setAddress(current.address ?? '');
             } catch (error) {
-                if (live) setError(error instanceof Error ? error.message : 'Không tải được hồ sơ. Vui lòng tải lại trang.');
+                if (live) setError(errorMessage(error, 'Không tải được hồ sơ. Vui lòng tải lại trang.'));
             } finally { if (live) setLoading(false); }
         })();
         return () => { live = false; };
@@ -46,7 +47,7 @@ export function ProfileSetup({ client, done }: { client: SupabaseClient; done: (
                     if (error) throw error;
                     done();
                 } catch (error) {
-                    setError(error instanceof Error ? error.message : 'Không lưu được hồ sơ. Vui lòng thử lại.');
+                    setError(errorMessage(error, 'Không lưu được hồ sơ. Vui lòng thử lại.'));
                 } finally { setBusy(false); }
             }}>
                 <Field label="Email đăng nhập"><input type="email" value={profile.email} readOnly /></Field>
