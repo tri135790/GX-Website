@@ -20,3 +20,7 @@
 @media(max-width:700px) { .employee-panel { padding: 16px; } .employee-list .task-row { align-items: flex-start; flex-direction: column; gap: 6px; } }
 
 .family-update { border-top: 1px solid var(--line); padding-top: 16px; min-width: 0; }
+
+.work-caption{font-size:12px;padding:0 16px;color:#47564e}.calendar-summary>div{flex-wrap:wrap;gap:12px}.brand-logo{display:block;width:150px;max-height:76px;object-fit:contain}.brand{padding:4px 0}
+
+.brand-logo{width:112px;max-height:112px}.sidebar-brand{justify-content:center}.sidebar .brand{margin:auto}.login .brand-logo{width:145px;max-height:145px}

@@ -1,3 +1,4 @@
+import { effectiveLesson } from './domain';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { emptyData, type Data, type Table, type Base } from './types';
 export type Change={table:Table;record:Base & Record<string,unknown>};
@@ -12,5 +13,5 @@ export async function connect(): Promise<SupabaseClient | null> {
   if (!key.startsWith('sb_publishable_')) throw Error('Frontend cần Supabase publishable key (sb_publishable_).');
   return createClient(url, key);
 }
-export async function loadData(client:SupabaseClient):Promise<Data>{const result={...emptyData};await Promise.all((Object.keys(result) as Table[]).map(async table=>{const rows:unknown[]=[];for(let start=0;;start+=1000){const {data,error}=await client.from(table).select('*').order('id').range(start,start+999);if(error)throw error;rows.push(...data);if(data.length<1000)break;}(result[table] as unknown[])=rows;}));return result;}
+export async function loadData(client:SupabaseClient):Promise<Data>{const result={...emptyData};await Promise.all((Object.keys(result) as Table[]).map(async table=>{const rows:unknown[]=[];for(let start=0;;start+=1000){const {data,error}=await client.from(table).select('*').order('id').range(start,start+999);if(error)throw error;rows.push(...data);if(data.length<1000)break;}(result[table] as unknown[])=rows;}));result.lessons=result.lessons.map(l=>effectiveLesson(l));return result;}
 export async function persist(client:SupabaseClient,changes:Change[],removed:Change[]=[]){const {error}=await client.rpc('save_bundle',{changes,removed});if(error)throw Error(error.code==='23P01'?'Giáo viên hoặc học sinh đã có lịch trùng giờ.':error.message);}

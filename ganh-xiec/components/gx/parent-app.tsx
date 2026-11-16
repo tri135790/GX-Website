@@ -25,14 +25,14 @@ export function ParentApp({client,user}:{client:SupabaseClient;user:Profile}){
   {error&&<div className="error" role="alert">{error}<button className="btn" onClick={()=>void refresh()}>Tải lại</button></div>}
   {loading?<p role="status">Đang tải lịch của con…</p>:!error&&<>
    <Field label="Chọn con"><select value={studentId} onChange={e=>{setStudentId(e.target.value);setLessonId(null);setFilter('');setWeek(monday());}}>{data.students.map(s=><option key={s.id} value={s.id}>{s.name}{s.active?'':' · Đã ngừng'}</option>)}</select></Field>
-   {!student?<p>Chưa có học sinh được liên kết. Vui lòng liên hệ quản trị viên.</p>:page==='calendar'?<CalendarPage key={studentId} title="Lịch của con" readOnly data={calendarData} busy={false} employeeFilter={filter} setEmployeeFilter={setFilter} openLesson={l=>setLessonId(l?.id||null)} openWeekly={()=>{}}/>:<>
+   {!student?<p>Chưa có học sinh được liên kết. Vui lòng liên hệ quản trị viên.</p>:page==='calendar'?<CalendarPage key={studentId} title="Lịch của con" readOnly showCapacity={false} data={calendarData} busy={false} employeeFilter={filter} setEmployeeFilter={setFilter} openLesson={l=>setLessonId(l?.id||null)} openWeekly={()=>{}}/>:<>
     <div className="page-heading"><h1>Tiến trình & cập nhật · {student.name}</h1></div>
     <Field label="Chọn tuần"><input type="date" value={week} onChange={e=>{if(e.target.value)setWeek(monday(e.target.value));}}/></Field>
     <p>{current.filter(l=>l.status==='completed').length} buổi hoàn thành · {hours(totals(current).actual)} giờ thực dạy</p>
     <FamilyWeekly key={studentId+week} client={client} studentId={studentId} week={week} setWeek={setWeek} userId={user.id} onDenied={()=>void refresh()}/>
    </>}
   </>}
-  {lesson&&<Modal title={student?.name||'Buổi học'} close={()=>setLessonId(null)}><p>{localDate(lesson.starts_at)} · {timeText(lesson.starts_at)}–{timeText(lesson.ends_at)}</p><p>{data.employees.find(e=>e.id===lesson.employee_id)?.name} · {lesson.mode==='online'?'Online':'Offline'} · {statusNames[lesson.status]}</p><h3>Địa điểm / đường dẫn lớp học</h3><p className="employee-note">{lesson.location}</p>{/^https?:\/\//i.test(lesson.location)&&<a className="btn" href={lesson.location} target="_blank" rel="noopener noreferrer">Mở lớp học</a>}</Modal>}
+  {lesson&&<Modal title={student?.name||'Buổi học'} close={()=>setLessonId(null)}><p>{localDate(lesson.starts_at)} · {timeText(lesson.starts_at)}–{timeText(lesson.ends_at)}</p><p>{data.employees.find(e=>e.id===lesson.employee_id)?.name} · {lesson.mode==='online'?'Online':'Offline'} · {statusNames[lesson.status]}</p><h3>Địa điểm / đường dẫn lớp học</h3><p className="employee-note">{lesson.location}</p>{/^https?:\/\//i.test(lesson.meeting_url||lesson.location)&&<a className="btn" href={lesson.meeting_url||lesson.location} target="_blank" rel="noopener noreferrer">Mở lớp học</a>}</Modal>}
   {help&&<Modal title="Dành cho phụ huynh" close={()=>setHelp(false)}><p>Bạn chỉ xem lịch của con được liên kết với tài khoản. Trong Tiến trình & cập nhật, chọn tuần để đọc nội dung giáo viên đã chia sẻ và ghi nhận hoạt động tại nhà. Mỗi phụ huynh sửa cập nhật của mình. Liên hệ admin khi cần đổi lịch hoặc liên kết học sinh.</p></Modal>}
  </AppShell>;
 }

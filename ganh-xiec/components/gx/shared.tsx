@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useRef } from 'react';
-import { X, Leaf, Tent } from 'lucide-react';
+import { X, Leaf } from 'lucide-react';
 import type { Table } from '@/lib/gx/types';
 import type { Change } from '@/lib/gx/client';
 import { localDate, timeText } from '@/lib/gx/domain';
@@ -48,5 +48,5 @@ export function Modal({ title, subtitle, close, children }: {
     }
 } }; document.addEventListener('keydown', handler); return () => { document.removeEventListener('keydown', handler); old?.focus(); }; }, [close]); return <div className="overlay" onClick={e => { if (e.target === e.currentTarget)
     close(); }}><div ref={root} tabIndex={-1} className="modal" role="dialog" aria-modal="true" aria-label={title}><div className="modal-head"><div><h2>{title}</h2>{subtitle && <p>{subtitle}</p>}</div><button className="icon-button" onClick={close} aria-label="Đóng"><X size={20}/></button></div>{children}</div></div>; }
-export function Brand() { return <div className="brand"><div className="brand-mark"><Tent size={29} strokeWidth={1.5}/></div><div><strong>gánh xiếc<span>✦</span></strong><small>BÊNH VỰC TỰ KỈ</small></div></div>; }
+export function Brand() { return <div className="brand"><img className="brand-logo" src={import.meta.env.BASE_URL+'logo.png'} alt="Gánh Xiếc – Bênh vực tự kỉ"/></div>; }
 export function inputTime(s: string) { return localDate(s) + 'T' + timeText(s); }

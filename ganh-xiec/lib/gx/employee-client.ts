@@ -1,7 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { emptyData, type Data, type Lesson, type Employee, type Student } from './types';
-export type CalendarRow = Pick<Lesson, 'id'|'student_id'|'employee_id'|'starts_at'|'ends_at'|'mode'|'status'|'actual_minutes'> & {student_name:string;employee_name:string;color:string};
-export type Workspace = Pick<Data,'students'|'assignments'|'goals'|'weekly'|'lessons'> & {employees:Pick<Employee,'id'|'name'|'color'>[];authors:{id:string;name:string}[]};
+export type CalendarRow = Pick<Lesson, 'id'|'student_id'|'employee_id'|'starts_at'|'ends_at'|'mode'|'status'|'actual_minutes'|'work_kind'|'location'|'all_day'|'work_group'> & {student_name:string;employee_name:string;color:string;employee_active?:boolean};
+export type Workspace = Pick<Data,'work_locations'|'students'|'assignments'|'goals'|'weekly'|'lessons'> & {employees:Pick<Employee,'id'|'name'|'color'|'active'>[];authors:{id:string;name:string}[]};
 export async function loadEmployee(client:SupabaseClient, start:string, end:string) {
     const calendarPromise = (async () => {
         const rows: CalendarRow[] = [];
@@ -21,13 +21,13 @@ export async function loadEmployee(client:SupabaseClient, start:string, end:stri
 }
 // Adapter for shared read-only calendar. Missing private fields are intentionally empty.
 export function calendarData(workspace:Workspace, rows:CalendarRow[]):Data {
-    const employees = new Map(workspace.employees.map(e=>[e.id,{...e,version:0,email:'',phone:'',specialty:'',active:true}]));
+    const employees = new Map(workspace.employees.map(e=>[e.id,{...e,version:0,email:'',phone:'',specialty:'',active:e.active}]));
     const students = new Map<string,Student>();
     for(const row of rows){
-        employees.set(row.employee_id,{id:row.employee_id,name:row.employee_name,color:row.color,version:0,email:'',phone:'',specialty:'',active:true});
-        students.set(row.student_id,{id:row.student_id,name:row.student_name,version:0,birth_date:'',start_date:'',notes:'',active:true});
+        employees.set(row.employee_id,{id:row.employee_id,name:row.employee_name,color:row.color,version:0,email:'',phone:'',specialty:'',active:row.employee_active??true});
+        if(row.student_id)students.set(row.student_id,{id:row.student_id,name:row.student_name,version:0,birth_date:'',start_date:'',notes:'',active:true});
     }
-    return {...emptyData,employees:[...employees.values()],students:[...students.values()],lessons:rows.map(row=>({...row,version:0,location:'',reason:'',content:'',note:'',series_id:null}))};
+    return {...emptyData,work_locations:workspace.work_locations||[],employees:[...employees.values()],students:[...students.values()],lessons:rows.map(row=>({...row,version:0,location:row.location||'',reason:'',content:'',note:'',series_id:null}))};
 }
 export async function saveEmployee(client:SupabaseClient,table:string,record:Record<string,unknown>){
     const {error}=await client.rpc('employee_save',{p_table:table,p_record:record});
