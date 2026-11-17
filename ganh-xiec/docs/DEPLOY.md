@@ -147,3 +147,23 @@ Cách xử lý:
 4. Nếu vẫn 404, chạy `notify pgrst, 'reload schema';` rồi tải lại trang và lưu lại.
 
 Không chạy lại 001/002 nếu đã áp dụng. Migration 003 độc lập với 002; project chưa bật giao diện Employee vẫn cần 003 để hoàn tất hồ sơ sau lời mời.
+
+
+## Gia đình, nội dung tùy chọn và xóa lịch (006)
+
+Trước khi triển khai frontend mới, áp dụng `006_family_work_updates.sql` trên đúng Supabase project mà frontend kết nối. Migration này yêu cầu 001–005 đã có, cập nhật hàm tạo lịch nhân viên, phục hồi `family_weekly(p_student uuid)`, cấp quyền và làm mới schema cache. Không chạy lại 001 hoặc migration đã áp dụng.
+
+Nếu gặp `Could not find the function public.family_weekly(p_student) in the schema cache`, kiểm tra trong SQL Editor:
+
+```sql
+select to_regprocedure('public.family_weekly(uuid)') as weekly_rpc,
+       to_regclass('public.family_reports') as reports,
+       to_regclass('public.family_updates') as updates,
+       to_regprocedure('public.work_minutes(public.lessons)') as work_minutes;
+```
+
+Đối chiếu lịch sử migration và project URL với cấu hình frontend. Nếu thiếu toàn bộ tính năng Phụ huynh, áp dụng 004 một lần sau các phụ thuộc 001–003; sau đó áp dụng 005 nếu thiếu và 006. Nếu database chỉ được cập nhật một phần, đối chiếu schema trước khi chạy tiếp; không chạy lại toàn bộ migration tạo bảng. Nếu đã đủ các thành phần nhưng riêng RPC bị thiếu, 006 tạo lại RPC. Nếu chữ ký đã đúng nhưng cache còn cũ, chạy `notify pgrst, 'reload schema';` rồi tải lại trang.
+
+`delete_work(p_anchor uuid, p_scope text, p_snapshot jsonb)` chỉ dành cho admin. Scope là `one` hoặc `future`; snapshot gồm `{id, version, deletable}` của mọi lịch trong phạm vi được xác nhận. Hàm kiểm tra lại toàn bộ phạm vi dưới khóa giao dịch, chỉ xóa lịch chưa hoàn thành/chưa tính giờ, giữ audit log. Chuỗi chỉ áp dụng cho cùng nhân viên từ lịch đã chọn trở đi. Nếu phạm vi, phiên bản hoặc giờ đã tính thay đổi thì giao dịch bị từ chối; tải lại trang và xác nhận lại.
+
+Sau khi migration thành công, triển khai frontend theo quy trình GitHub Pages hiện có. Chỉ cập nhật frontend không sửa được RPC thiếu trên Supabase.

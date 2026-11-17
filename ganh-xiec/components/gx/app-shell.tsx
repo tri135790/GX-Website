@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import { CalendarDays, Users, GraduationCap, HeartHandshake, ShieldCheck, Menu, X, LogOut, CircleHelp, Settings } from 'lucide-react';
 import type { Profile } from '@/lib/gx/types';
 import { Brand } from './shared';
-const adminItems = [['calendar', 'Lịch làm việc', CalendarDays], ['employees', 'Nhân sự', Users], ['students', 'Học sinh', GraduationCap], ['parents', 'Phụ huynh', HeartHandshake], ['accounts', 'Tài khoản', ShieldCheck], ['settings','Cài đặt',Settings]] as const;
+const adminItems = [['calendar', 'Lịch làm việc', CalendarDays], ['employees', 'Nhân sự', Users], ['students', 'Gia đình', HeartHandshake], ['accounts', 'Tài khoản', ShieldCheck], ['settings','Cài đặt',Settings]] as const;
 export function AppShell({ page, go, user, demo, help, setup, logout, children }: {
     page: string;
     go: (s: string) => void;

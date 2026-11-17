@@ -1,20 +1,31 @@
 import { useState } from 'react';
+import { workDeleteSnapshot, type DeleteScope, type DeleteSnapshot } from '@/lib/gx/work-deletion';
 import { Check } from 'lucide-react';
 import type { Change } from '@/lib/gx/client';
 import { type Data, type Lesson, type WorkKind, workNames } from '@/lib/gx/types';
 import { addDays, localDate, minutes, timeText, validateLesson } from '@/lib/gx/domain';
 import { Field, uid, change, inputTime } from './shared';
 
-export function WorkForm({record,data,save,busy,employeeId}:{record?:Partial<Lesson>;data:Data;save:(changes:Change[])=>Promise<void>;busy:boolean;employeeId?:string}){
+export function WorkForm({record,data,save,busy,employeeId,onDelete}:{onDelete?:(anchor:Lesson,scope:DeleteScope,snapshot:DeleteSnapshot)=>Promise<void>;record?:Partial<Lesson>;data:Data;save:(changes:Change[])=>Promise<void>;busy:boolean;employeeId?:string}){
  const [f,setF]=useState<Lesson>({id:uid(),version:0,student_id:'',employee_id:employeeId||'',starts_at:localDate()+'T08:00:00+07:00',ends_at:localDate()+'T09:00:00+07:00',mode:'offline',location:'—',status:'scheduled',actual_minutes:0,reason:'',content:'',note:'',series_id:null,work_kind:'therapy',auto_recorded:true,...record});
  const [people,setPeople]=useState<string[]>(employeeId?[employeeId]:record?.employee_id?[record.employee_id]:[]),[repeat,setRepeat]=useState(false),[until,setUntil]=useState(addDays(localDate(f.starts_at),28)),[days,setDays]=useState([new Date(f.starts_at).getUTCDay()]),[error,setError]=useState(''),[scope,setScope]=useState('one');
+ const [deleteScope,setDeleteScope]=useState<DeleteScope>('one');
+ const anchor=data.lessons.find(l=>l.id===record?.id);
+ const preview=anchor?workDeleteSnapshot(data.lessons,anchor,deleteScope):[];
+ const deleteCount=preview.filter(l=>l.deletable).length;
+ async function remove(){if(!anchor||!onDelete)return;setError('');try{
+  const snapshot=workDeleteSnapshot(data.lessons,anchor,deleteScope);
+  const count=snapshot.filter(l=>l.deletable).length;
+  if(!count)throw Error('Không có lịch đủ điều kiện xóa. Lịch đã hoàn thành hoặc đã tính giờ được giữ lại.');
+  if(!confirm(`Xóa ${count} lịch, giữ lại ${snapshot.length-count} lịch đã hoàn thành hoặc đã tính giờ? Thao tác này không thể hoàn tác. Các thay đổi chưa lưu sẽ bị bỏ qua.`))return;
+  await onDelete(anchor,deleteScope,snapshot);
+ }catch(e:any){setError(e.message||'Không xóa được lịch.');}}
  const kind=f.work_kind||'legacy', teaching=['legacy','therapy','consultation'].includes(kind),multi=!employeeId&&!record?.id&&['meeting','leave'].includes(kind);
  const set=(key:keyof Lesson,value:unknown)=>setF(old=>({...old,[key]:value}));
  const location=data.work_locations.find(l=>l.id===f.location_id);
  const available=data.employees.filter(e=>e.active&&(!employeeId||e.id===employeeId)&&(!teaching||!f.student_id||data.assignments.some(a=>a.student_id===f.student_id&&a.employee_id===e.id)));
  async function submit(e:React.FormEvent){e.preventDefault();setError('');try{
   const selected=multi?people:[employeeId||f.employee_id];if(selected.some(id=>!id)||!selected.length)throw Error('Chọn nhân sự.');
-  if(!f.content.trim()&&kind!=='legacy')throw Error('Nhập nội dung làm việc.');
   const base={...f,student_id:teaching?f.student_id:null,location:location?.name||'—',mode:location?.mode||'offline',status:kind==='leave'&&f.status!=='cancelled'?'scheduled':f.status,actual_minutes:0,auto_recorded:kind!=='leave'&&f.status!=='cancelled'} as Lesson;
   if(base.status==='completed')base.actual_minutes=Number(f.actual_minutes)||minutes(f);
   if(kind==='leave'){base.actual_minutes=0;base.location='—';base.location_id=null;base.meeting_url='';}
@@ -27,7 +38,7 @@ export function WorkForm({record,data,save,busy,employeeId}:{record?:Partial<Les
  }catch(e:any){setError(e.message||'Không lưu được giờ làm.');}}
  return <form className="form" onSubmit={submit}>{error&&<div className="error" role="alert">{error}</div>}
   <Field label="Loại công việc"><select value={kind} onChange={e=>{const work_kind=e.target.value as WorkKind;setF({...f,work_kind,all_day:false,student_id:'',employee_id:employeeId||f.employee_id,location_id:null});}}>{Object.entries(workNames).filter(([k])=>(k!=='legacy'||record?.id)&&(!employeeId||k!=='leave')).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select></Field>
-  <Field label="Nội dung làm việc"><textarea required={kind!=='legacy'} value={f.content} onChange={e=>set('content',e.target.value)}/></Field>
+  <Field label="Nội dung làm việc (không bắt buộc)"><textarea value={f.content} onChange={e=>set('content',e.target.value)}/></Field>
   {teaching&&<Field label="Học sinh"><select required value={f.student_id||''} onChange={e=>set('student_id',e.target.value)}><option value="">Chọn học sinh</option>{data.students.filter(s=>s.active||s.id===f.student_id).map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select></Field>}
   {!employeeId&&(multi?<fieldset><legend>Nhân sự tham gia</legend>{available.map(e=><label className="checkbox" key={e.id}><input type="checkbox" checked={people.includes(e.id)} onChange={ev=>setPeople(ev.target.checked?[...people,e.id]:people.filter(id=>id!==e.id))}/>{e.name}</label>)}</fieldset>:<Field label="Nhân sự"><select required value={f.employee_id} onChange={e=>set('employee_id',e.target.value)}><option value="">Chọn nhân sự</option>{data.employees.filter(e=>available.some(a=>a.id===e.id)||e.id===f.employee_id).map(e=><option key={e.id} value={e.id}>{e.name}</option>)}</select></Field>)}
   {record?.work_group&&<p>Chỉnh sửa phần giờ của nhân sự này. Các nhân sự khác giữ nguyên.</p>}
@@ -39,6 +50,7 @@ export function WorkForm({record,data,save,busy,employeeId}:{record?:Partial<Les
   {record?.series_id&&<Field label="Phạm vi thay đổi"><select value={scope} onChange={e=>setScope(e.target.value)}><option value="one">Chỉ giờ làm này</option><option value="future">Các giờ chưa hoàn thành tiếp theo trong chuỗi</option></select></Field>}
   {record?.id&&!employeeId&&<><Field label="Trạng thái"><select value={f.status==='absent'?'cancelled':f.status} onChange={e=>set('status',e.target.value)}><option value="scheduled">Đã lên lịch</option>{kind!=='leave'&&<option value="completed">Hoàn thành</option>}<option value="cancelled">Hủy</option></select></Field>{f.status==='completed'&&<Field label="Số phút làm việc"><input type="number" min="1" step="1" value={f.actual_minutes||minutes(f)} onChange={e=>set('actual_minutes',Number(e.target.value))}/></Field>}<Field label="Ghi chú"><textarea value={f.note} onChange={e=>set('note',e.target.value)}/></Field></>}
   {(f.status==='cancelled'||(f.status==='completed'&&f.actual_minutes>0&&f.actual_minutes!==minutes(f)))&&<Field label="Lý do hủy / điều chỉnh giờ"><input required placeholder="Ví dụ: Học sinh vắng" value={f.reason} onChange={e=>set('reason',e.target.value)}/></Field>}
+  {anchor&&onDelete&&!employeeId&&<section className="repeat-box"><h3>Xóa lịch</h3>{anchor.series_id&&<Field label="Phạm vi xóa"><select disabled={busy} value={deleteScope} onChange={e=>setDeleteScope(e.target.value as DeleteScope)}><option value="one">Chỉ lịch này</option><option value="future">Lịch này và các lịch tiếp theo trong chuỗi</option></select></Field>}<p>{deleteCount} lịch sẽ xóa · {preview.length-deleteCount} lịch đã hoàn thành hoặc đã tính giờ được giữ lại.</p><button type="button" className="btn danger" disabled={busy||!deleteCount} onClick={remove}>Xóa lịch</button></section>}
   <div className="form-footer"><small>UTC+7 · Giờ đã qua tự cộng vào tổng, không cần duyệt.</small><button disabled={busy} className="btn primary">{busy?'Đang lưu…':'Lưu giờ làm'}<Check size={16}/></button></div>
  </form>;
 }

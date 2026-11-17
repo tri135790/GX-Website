@@ -20,7 +20,7 @@ export function FamilyWeekly({client,studentId,week,setWeek,userId,staff=false,s
   const {data:next,error:failure}=await client.rpc('family_weekly',{p_student:studentId});
   if(request!==seq.current)return;
   setLoading(false);
-  if(failure){setData(empty);setEditing(false);setError(failure.message);if(failure.code==='42501')denied.current?.();throw failure;}
+  if(failure){setData(empty);setEditing(false);setError(failure.code==='PGRST202'?'Chưa tải được tiến trình tuần vì hệ thống chưa cập nhật đầy đủ. Vui lòng liên hệ quản trị viên và thử lại sau.':failure.message);if(failure.code==='42501')denied.current?.();throw failure;}
   setData(next);setError('');if(!next.active)setEditing(false);
  },[client,studentId]);
  useEffect(()=>{setData(empty);setLoading(true);setEditing(false);const reload=()=>void load().catch(()=>{});reload();window.addEventListener('focus',reload);const timer=setInterval(reload,30000);return()=>{++seq.current;clearInterval(timer);window.removeEventListener('focus',reload);};},[load]);
