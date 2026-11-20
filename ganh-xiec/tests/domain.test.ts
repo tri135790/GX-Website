@@ -9,8 +9,38 @@ test('overlap across teachers or students, adjacent sessions allowed',()=>{asser
 test('reason required for modified actual hours and cancelled/absent sessions',()=>{assert.throws(()=>validateLesson({...l,status:'completed',actual_minutes:30},[]));assert.throws(()=>validateLesson({...l,status:'cancelled'},[]));assert.throws(()=>validateLesson({...l,status:'absent'},[]));assert.doesNotThrow(()=>validateLesson({...l,status:'completed',actual_minutes:60},[]));assert.throws(()=>validateLesson({...l,ends_at:l.starts_at},[]));assert.throws(()=>validateLesson({...l,status:'completed',actual_minutes:1.5,reason:'x'},[]));});
 
 test('weekday capacity and leave do not reduce six-hour norm',()=>{assert.equal(workCapacity('2026-11-16','2026-11-23'),1800);assert.equal(workCapacity('2026-11-21','2026-11-23'),0);assert.equal(workCapacity('2026-11-16','2026-11-17',3),1080);const leave={...l,work_kind:'leave' as const,status:'scheduled' as const,auto_recorded:false};assert.equal(workCapacity('2026-11-02','2026-11-03')-totals([leave]).actual,360);});
-test('auto-recorded work counts only after end and never cancellation',()=>{const work={...l,auto_recorded:true,work_kind:'consultation' as const};assert.equal(effectiveLesson(work,Date.parse(l.starts_at)).actual_minutes,0);assert.equal(effectiveLesson(work,Date.parse(l.ends_at)).actual_minutes,60);assert.equal(effectiveLesson({...work,status:'cancelled'},Date.parse(l.ends_at)).actual_minutes,0);});
-test('work categories reconcile and meetings sum per employee',()=>{const items=[{...l,work_kind:'consultation' as const,status:'completed' as const,actual_minutes:60},{...l,id:'2',work_kind:'therapy' as const,status:'completed' as const,actual_minutes:120},...['e1','e2','e3'].map(employee_id=>({...l,employee_id,work_kind:'meeting' as const,status:'completed' as const,actual_minutes:60}))];const sum=totals(items);assert.equal(sum.actual,360);assert.equal(sum.consultation,60);assert.equal(sum.therapy,120);assert.equal(sum.other,180);assert.equal(sum.actual,sum.consultation+sum.therapy+sum.other);});
+test('elapsed scheduled work requires manual completion even with a legacy auto-recorded flag',()=>{
+ const work={...l,auto_recorded:true,work_kind:'consultation' as const};
+ for(const now of [Date.parse(l.starts_at),Date.parse(l.ends_at),Date.parse(l.ends_at)+86400000]){
+  const actual=effectiveLesson(work,now);
+  assert.equal(actual.status,'scheduled');
+  assert.equal(actual.actual_minutes,0);
+  assert.equal(totals([actual]).actual,0);
+ }
+ const completed={...work,status:'completed' as const,actual_minutes:60};
+ assert.equal(totals([effectiveLesson(completed,Date.parse(l.ends_at))]).actual,60);
+ assert.equal(totals([{...completed,status:'scheduled',actual_minutes:0}]).actual,0);
+ assert.equal(totals([{...work,status:'cancelled'}]).actual,0);
+ assert.equal(totals([{...completed,work_kind:'leave'}]).actual,0);
+});
+test('categories reconcile and a shared meeting counts only its confirmed primary',()=>{
+ const items:Lesson[]=[
+  {...l,work_kind:'consultation',status:'completed',actual_minutes:60},
+  {...l,id:'2',work_kind:'therapy',status:'completed',actual_minutes:120},
+  {...l,id:'3',student_id:'',employee_id:'e1',support_employee_ids:['e2','e3'],work_kind:'meeting',status:'completed',actual_minutes:60},
+ ];
+ const sum=totals(items);
+ assert.equal(sum.actual,240);assert.equal(sum.consultation,60);assert.equal(sum.therapy,120);assert.equal(sum.other,60);
+ assert.equal(sum.actual,sum.consultation+sum.therapy+sum.other);
+ assert.equal(totals([{...items[2],primary_pending:true}]).actual,0);
+ assert.equal(totals([{...items[2],primary_pending:true}]).planned,0);
+});
+test('support participants may overlap while primary staff and students remain protected',()=>{
+ const meeting:Lesson={...l,student_id:'',support_employee_ids:['e2'],work_kind:'meeting'};
+ assert.equal(overlaps(meeting,{...l,id:'2',employee_id:'e2',student_id:'s2'}),false);
+ assert.equal(overlaps(meeting,{...l,id:'2',employee_id:'e1',student_id:'s2'}),true);
+ assert.equal(overlaps(l,{...l,id:'2',employee_id:'e2'}),true);
+});
 test('non-student work does not conflict across different people',()=>{assert.equal(overlaps({...l,student_id:''},{...l,id:'2',student_id:'',employee_id:'e2'}),false);});
 
 test('overtime on one day cannot erase a full-day absence or another employee vacancy',()=>{const work={...l,status:'completed' as const,actual_minutes:720};const result=workUtilization([work],'2026-11-02','2026-11-04',['e1','e2']);assert.equal(result.free,1080);assert.equal(result.over,360);});

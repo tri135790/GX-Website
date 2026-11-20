@@ -9,9 +9,12 @@ alter table public.students
  add column contact_phone text not null default '', add column contact_email text not null default '',
  add column address text not null default '', add column diagnosis text not null default '',
  add column short_name text not null default '', add column service_modes text[] not null default array['offline'];
-update public.students s set service_modes=coalesce((select array_agg(distinct l.mode) from public.lessons l where l.student_id=s.id),array['offline']);
 alter table public.students add constraint valid_service_modes check(cardinality(service_modes)>0 and service_modes <@ array['online','offline'] and array_position(service_modes,null) is null);
-alter table public.employees add column address text not null default '',add column current_role text not null default '',add column notes text not null default '';
+update public.students s set service_modes=coalesce((select array_agg(distinct l.mode) from public.lessons l where l.student_id=s.id),array['offline']);
+-- Drain deferred relation checks before later schema changes in this transaction.
+set constraints all immediate;
+set constraints all deferred;
+alter table public.employees add column address text not null default '',add column "current_role" text not null default '',add column notes text not null default '';
 alter table public.lessons
  add column support_employee_ids uuid[] not null default '{}', add column primary_pending boolean not null default false,
  add column report_content text not null default '',add column report_status text not null default 'draft' check(report_status in ('draft','submitted')),
@@ -52,6 +55,9 @@ grant select on public.lesson_participants to authenticated;
 create policy participant_read on public.lesson_participants for select to authenticated using(public.is_admin() or employee_id=public.current_employee());
 insert into public.lesson_participants select id,employee_id,case when primary_pending then 'support' else 'primary' end from public.lessons;
 insert into public.lesson_participants select id,unnest(support_employee_ids),'support' from public.lessons;
+-- Flush participant foreign-key checks before installing triggers on lessons.
+set constraints all immediate;
+set constraints all deferred;
 create function public.sync_lesson_participants() returns trigger language plpgsql security definer set search_path='' as $$begin
  delete from public.lesson_participants where lesson_id=new.id;
  insert into public.lesson_participants values(new.id,new.employee_id,case when new.primary_pending then 'support' else 'primary' end);
