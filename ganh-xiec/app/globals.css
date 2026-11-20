@@ -55,3 +55,10 @@
 .calendar-panel .fc .fc-list-event .calendar-event { border:2px solid; height:auto; }
 .calendar-panel .fc .event-cancelled { opacity:1; text-decoration:line-through; }
 .calendar-person-legend { padding:4px 9px; border:2px solid; border-radius:7px; }
+
+/* Month view groups overlapping appointments into an actual horizontal row. */
+.calendar-panel .fc .month-horizontal-event { background:transparent; border:0; padding:0; margin:4px; cursor:default; }
+.calendar-panel .fc .month-horizontal-event .fc-event-main { min-width:0; width:100%; }
+.calendar-panel .fc .month-horizontal-row { display:flex; flex-direction:row; flex-wrap:nowrap; gap:8px; width:100%; max-width:100%; overflow-x:auto; align-items:stretch; padding-bottom:6px; overscroll-behavior-x:contain; }
+.calendar-panel .fc .month-horizontal-card { flex:1 0 200px; width:200px; height:auto; min-height:130px; max-width:none; border:2px solid; text-align:left; cursor:pointer; font:inherit; }
+.calendar-panel .fc .month-horizontal-card:only-child { flex-basis:100%; }
