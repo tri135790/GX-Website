@@ -36,3 +36,22 @@
 .calendar-panel .fc-scrollgrid { border-radius: 14px; overflow: hidden; }
 .calendar-panel .fc-day-other { background: #f8faf6; }
 @media(max-width:700px) { .calendar-toolbar { flex-wrap: wrap; } .calendar-panel .fc-dayGridMonth-view .fc-daygrid-day-frame { min-height: 90px; } }
+
+/* Keep simultaneous appointments readable within a horizontally scrolling calendar. */
+.main-shell,.content,.calendar-panel { min-width:0; }
+.calendar-canvas { width:100%; max-width:100%; overflow-x:auto; overscroll-behavior-x:contain; }
+.calendar-width { width:100%; }
+.calendar-panel .fc .calendar-event { box-sizing:border-box; width:100%; max-width:100%; min-width:0; padding:5px 6px; border-radius:5px; overflow:auto; overscroll-behavior:contain; scrollbar-width:thin; }
+.calendar-panel .fc .calendar-event strong,
+.calendar-panel .fc .calendar-event small,
+.calendar-panel .fc .calendar-event > span { white-space:normal; overflow:visible; overflow-wrap:anywhere; text-overflow:clip; color:inherit; opacity:1; flex-shrink:0; line-height:1.35; }
+.calendar-panel .fc .calendar-event strong { display:block; }
+.calendar-panel .fc .calendar-event-status { display:flex; align-items:flex-start; gap:5px; }
+.calendar-panel .fc .calendar-event-status svg { flex-shrink:0; margin-top:2px; }
+.calendar-panel .fc .calendar-event:focus-visible { outline:2px solid currentColor; outline-offset:-3px; }
+.calendar-panel .fc .fc-timegrid-event { border-width:2px; overflow:hidden; }
+.calendar-panel .fc .fc-timegrid-event .fc-event-main { height:100%; min-height:0; overflow:hidden; }
+.calendar-panel .fc .fc-timegrid-event .calendar-event { height:100%; }
+.calendar-panel .fc .fc-list-event .calendar-event { border:2px solid; height:auto; }
+.calendar-panel .fc .event-cancelled { opacity:1; text-decoration:line-through; }
+.calendar-person-legend { padding:4px 9px; border:2px solid; border-radius:7px; }
