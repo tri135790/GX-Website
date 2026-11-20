@@ -1,3 +1,4 @@
+import { DateInput } from './date-input';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { emptyData, statusNames, type Data, type Profile, type Lesson, type Employee } from '@/lib/gx/types';
@@ -27,7 +28,7 @@ export function ParentApp({client,user}:{client:SupabaseClient;user:Profile}){
    <Field label="Chọn con"><select value={studentId} onChange={e=>{setStudentId(e.target.value);setLessonId(null);setFilter('');setWeek(monday());}}>{data.students.map(s=><option key={s.id} value={s.id}>{s.name}{s.active?'':' · Đã ngừng'}</option>)}</select></Field>
    {!student?<p>Chưa có học sinh được liên kết. Vui lòng liên hệ quản trị viên.</p>:page==='calendar'?<CalendarPage key={studentId} title="Lịch của con" readOnly showCapacity={false} data={calendarData} busy={false} employeeFilter={filter} setEmployeeFilter={setFilter} openLesson={l=>setLessonId(l?.id||null)} openWeekly={()=>{}}/>:<>
     <div className="page-heading"><h1>Tiến trình & cập nhật · {student.name}</h1></div>
-    <Field label="Chọn tuần"><input type="date" value={week} onChange={e=>{if(e.target.value)setWeek(monday(e.target.value));}}/></Field>
+    <Field label="Chọn tuần"><DateInput type="date" value={week} onChange={e=>{if(e.target.value)setWeek(monday(e.target.value));}}/></Field>
     <p>{current.filter(l=>l.status==='completed').length} buổi hoàn thành · {hours(totals(current).actual)} giờ thực dạy</p>
     <FamilyWeekly key={studentId+week} client={client} studentId={studentId} week={week} setWeek={setWeek} userId={user.id} onDenied={()=>void refresh()}/>
    </>}

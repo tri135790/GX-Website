@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import { CalendarDays, Users, GraduationCap, HeartHandshake, ShieldCheck, Menu, X, LogOut, CircleHelp, Settings } from 'lucide-react';
 import type { Profile } from '@/lib/gx/types';
 import { Brand } from './shared';
-const adminItems = [['calendar', 'Lịch làm việc', CalendarDays], ['employees', 'Nhân sự', Users], ['students', 'Gia đình', HeartHandshake], ['accounts', 'Tài khoản', ShieldCheck], ['settings','Cài đặt',Settings]] as const;
+const adminItems = [['calendar', 'Lịch làm việc', CalendarDays], ['employees', 'Nhân sự', Users], ['students', 'Hồ sơ', HeartHandshake], ['accounts', 'Tài khoản', ShieldCheck], ['settings','Cài đặt',Settings]] as const;
 export function AppShell({ page, go, user, demo, help, setup, logout, children }: {
     page: string;
     go: (s: string) => void;
@@ -14,7 +14,7 @@ export function AppShell({ page, go, user, demo, help, setup, logout, children }
     logout: () => void;
     children: React.ReactNode;
 }) {
-    const items = user?.role === 'parents' ? [['calendar', 'Lịch của con', CalendarDays], ['weekly', 'Tiến trình & cập nhật', GraduationCap]] as const : user?.role === 'employee' ? [['calendar', 'Lịch làm việc', CalendarDays], ['students', 'Học sinh phụ trách', GraduationCap]] as const : adminItems;
+    const items = user?.role === 'parents' ? [['calendar', 'Lịch của con', CalendarDays], ['weekly', 'Tiến trình & cập nhật', GraduationCap]] as const : user?.role === 'employee' ? [['calendar', 'Lịch làm việc', CalendarDays], ['students', 'Phụ trách', GraduationCap]] as const : adminItems;
     const [open, setOpen] = useState(false), [narrow, setNarrow] = useState(false);
     const sidebar = useRef<HTMLElement>(null), menu = useRef<HTMLButtonElement>(null);
     useEffect(() => { const media = window.matchMedia('(max-width:900px)'); const update = () => { setNarrow(media.matches); if (!media.matches)

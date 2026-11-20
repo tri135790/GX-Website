@@ -167,3 +167,21 @@ select to_regprocedure('public.family_weekly(uuid)') as weekly_rpc,
 `delete_work(p_anchor uuid, p_scope text, p_snapshot jsonb)` chỉ dành cho admin. Scope là `one` hoặc `future`; snapshot gồm `{id, version, deletable}` của mọi lịch trong phạm vi được xác nhận. Hàm kiểm tra lại toàn bộ phạm vi dưới khóa giao dịch, chỉ xóa lịch chưa hoàn thành/chưa tính giờ, giữ audit log. Chuỗi chỉ áp dụng cho cùng nhân viên từ lịch đã chọn trở đi. Nếu phạm vi, phiên bản hoặc giờ đã tính thay đổi thì giao dịch bị từ chối; tải lại trang và xác nhận lại.
 
 Sau khi migration thành công, triển khai frontend theo quy trình GitHub Pages hiện có. Chỉ cập nhật frontend không sửa được RPC thiếu trên Supabase.
+
+
+### 006 báo “Thiếu cập nhật Phụ huynh”
+
+Nếu database đã có chức năng Nhân sự (002) và giờ làm (005) nhưng thiếu hoặc chỉ có một phần 004, chạy toàn bộ `supabase/repairs/repair_family_and_work.sql` trong SQL Editor. File bổ sung các bảng Phụ huynh còn thiếu, phục hồi hàm/quyền/policy/trigger của 004 và áp dụng 006 trong cùng một giao dịch. Không xóa dữ liệu, không ghi đè `parent_workspace` hiện có. Không cần chạy 006 lần nữa khi file này thành công.
+
+File sửa chữa không chạy lại 001–005. Nếu báo thiếu 002/005 hoặc schema không khớp, giao dịch dừng: cần đối chiếu database thực tế trước khi áp dụng các migration còn thiếu. Sau khi chạy thành công, tải lại website rồi thử xóa lịch. SQL lỗi trước đó đã dừng 006, nên không thể chỉ làm mới schema cache để khắc phục.
+
+
+## Lịch thủ công, nhân sự chính/phụ và Hồ sơ (007)
+
+Áp dụng `supabase/migrations/007_manual_work_profiles.sql` sau 006, trước khi triển khai frontend này. Nếu 006 từng báo thiếu Phụ huynh, chạy `supabase/repairs/repair_family_and_work.sql` trước. Không chạy lại các migration đã thành công. 007 chạy trong một giao dịch và giữ bản gốc các lịch nhóm được gộp tại `legacy_work_archive` (chỉ admin đọc).
+
+Lịch mới có một người chính (`employee_id`) và danh sách phụ (`support_employee_ids`), đồng bộ vào bảng `lesson_participants`. Database chỉ kiểm tra trùng người chính và trẻ; người phụ không giữ giờ và không tính giờ. Không tự hoàn thành lịch quá giờ. Lịch cũ được đánh dấu hoàn thành thật giữ nguyên; trạng thái suy diễn từ auto_recorded bị bỏ. Lịch nhóm gộp chỉ khi mọi thông tin tương thích, được đánh dấu `primary_pending`: admin phải chọn người chính trước khi tính giờ. Kiểm tra các lịch này sau khi cập nhật. Không suy đoán người chính từ thứ tự ID.
+
+`employee_calendar_v2` cung cấp người tham gia cho lịch; `update_my_work` cho người chính xác nhận hoàn thành hoặc lưu/nộp báo cáo, kiểm tra phiên bản và quyền tại server. Báo cáo độc lập với trạng thái hoàn thành. Nội dung/ghi chú cũ không tự biến thành báo cáo đã nộp. Nhân sự bị ẩn sẽ bị khóa profile và thu hồi lời mời chưa dùng; phải xử lý phân công/lịch chưa hoàn thành trước khi ẩn.
+
+Hồ sơ hỗ trợ ONLINE/OFFLINE đồng thời và các trường liên hệ tùy chọn. Giáo viên dùng chung hồ sơ Nhân sự. Không triển khai bài tập trong đợt này. Kiểm tra TypeScript; không chạy test tự động theo yêu cầu.

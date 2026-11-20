@@ -24,3 +24,15 @@
 .work-caption{font-size:12px;padding:0 16px;color:#47564e}.calendar-summary>div{flex-wrap:wrap;gap:12px}.brand-logo{display:block;width:150px;max-height:76px;object-fit:contain}.brand{padding:4px 0}
 
 .brand-logo{width:112px;max-height:112px}.sidebar-brand{justify-content:center}.sidebar .brand{margin:auto}.login .brand-logo{width:145px;max-height:145px}
+
+/* Calendar month view: compact coloured labels and a clear monthly grid. */
+.calendar-panel .fc-dayGridMonth-view .fc-daygrid-day-frame { min-height: 130px; }
+.calendar-panel .fc-daygrid-event { border-radius: 9px; padding: 3px 6px; margin: 3px 4px; overflow: hidden; }
+.calendar-panel .fc-daygrid-event .calendar-event { min-width: 0; width: 100%; }
+.calendar-panel .fc-daygrid-event strong { display: flex; gap: 4px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.calendar-panel .fc-day-today .fc-daygrid-day-number { border-radius: 50%; background: #243c35; color: white; }
+.calendar-panel .fc-col-header-cell { background: #f5f7f2; padding: 9px 0; }
+.calendar-panel .fc-daygrid-more-link { font-weight: 600; color: #3d665a; }
+.calendar-panel .fc-scrollgrid { border-radius: 14px; overflow: hidden; }
+.calendar-panel .fc-day-other { background: #f8faf6; }
+@media(max-width:700px) { .calendar-toolbar { flex-wrap: wrap; } .calendar-panel .fc-dayGridMonth-view .fc-daygrid-day-frame { min-height: 90px; } }

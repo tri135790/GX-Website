@@ -1,12 +1,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { emptyData, type Data, type Lesson, type Employee, type Student } from './types';
-export type CalendarRow = Pick<Lesson, 'id'|'student_id'|'employee_id'|'starts_at'|'ends_at'|'mode'|'status'|'actual_minutes'|'work_kind'|'location'|'all_day'|'work_group'> & {student_name:string;employee_name:string;color:string;employee_active?:boolean};
+export type CalendarRow = Pick<Lesson, 'id'|'student_id'|'employee_id'|'starts_at'|'ends_at'|'mode'|'status'|'actual_minutes'|'work_kind'|'location'|'all_day'|'work_group'|'support_employee_ids'|'primary_pending'|'report_status'> & {student_name:string;employee_name:string;color:string;employee_active?:boolean};
 export type Workspace = Pick<Data,'work_locations'|'students'|'assignments'|'goals'|'weekly'|'lessons'> & {employees:Pick<Employee,'id'|'name'|'color'|'active'>[];authors:{id:string;name:string}[]};
 export async function loadEmployee(client:SupabaseClient, start:string, end:string) {
     const calendarPromise = (async () => {
         const rows: CalendarRow[] = [];
         for(let startRow=0;;startRow+=1000) {
-            const {data,error}=await client.rpc('employee_calendar',{p_start:start+'T00:00:00+07:00',p_end:end+'T00:00:00+07:00'}).order('starts_at').order('id').range(startRow,startRow+999);
+            const {data,error}=await client.rpc('employee_calendar_v2',{p_start:start+'T00:00:00+07:00',p_end:end+'T00:00:00+07:00'}).order('starts_at').order('id').range(startRow,startRow+999);
             if(error) throw error;
             rows.push(...data);
             if(data.length<1000) return rows;

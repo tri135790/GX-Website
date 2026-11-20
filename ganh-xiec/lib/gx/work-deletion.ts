@@ -2,8 +2,7 @@ import type { Lesson } from './types';
 export type DeleteScope = 'one' | 'future';
 export type DeleteSnapshot = { id: string; version: number; deletable: boolean }[];
 export function canDeleteWork(l: Lesson, now = Date.now()): boolean {
- return l.status !== 'completed' && !(l.actual_minutes > 0) &&
-  !(l.status === 'scheduled' && l.auto_recorded && l.work_kind !== 'leave' && Date.parse(l.ends_at) <= now);
+ return l.status !== 'completed' && !(l.actual_minutes > 0);
 }
 export function workDeleteSnapshot(list: Lesson[], anchor: Lesson, scope: DeleteScope, now = Date.now()): DeleteSnapshot {
  return list.filter(l => scope === 'future' && anchor.series_id
