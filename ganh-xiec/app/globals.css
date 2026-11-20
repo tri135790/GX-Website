@@ -89,3 +89,13 @@
  .calendar-panel .fc .fc-col-header-cell-cushion { font-size:10px; padding:3px 0; white-space:normal; }
  .calendar-panel .fc .fc-daygrid-more-link { font-size:10px; white-space:normal; }
 }
+
+.employee-color-picker { grid-column:1 / -1; min-width:0; border:1px solid var(--line); border-radius:12px; padding:14px; display:flex; flex-direction:column; gap:12px; }
+.employee-color-picker legend { padding:0 5px; font-weight:600; }
+.employee-color-swatches { display:flex; flex-wrap:wrap; gap:10px; }
+.employee-color-swatches button { width:36px; height:36px; padding:0; border:2px solid; border-radius:50%; font-size:20px; cursor:pointer; }
+.employee-color-swatches button[aria-pressed="true"] { outline:2px solid #344b43; outline-offset:3px; }
+.employee-color-swatches button:focus-visible { outline:3px solid #344b43; outline-offset:3px; }
+.employee-custom-color { display:flex; align-items:center; gap:12px; }
+.employee-custom-color input { width:52px; height:36px; padding:3px; }
+.employee-color-preview { display:flex; flex-direction:column; gap:4px; padding:12px; border:1px solid; border-radius:9px; overflow-wrap:anywhere; }

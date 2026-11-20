@@ -4,12 +4,15 @@ import { localDate } from './domain';
 export function calendarColors(color?: string) {
  let background = /^#[0-9a-f]{6}$/i.test(color || '') ? color! : '#386b9b';
  if (/^#[0-9a-f]{3}$/i.test(color || '')) background = '#' + color!.slice(1).split('').map(c => c + c).join('');
- const rgb = [1, 3, 5].map(i => parseInt(background.slice(i, i + 2), 16));
+ const base = [1, 3, 5].map(i => parseInt(background.slice(i, i + 2), 16));
+ // Keep the selected hue while softening all calendar surfaces with white.
+ const rgb = base.map(v => Math.round(v * 0.35 + 255 * 0.65));
+ background = '#' + rgb.map(v => v.toString(16).padStart(2, '0')).join('');
  const linear = rgb.map(v => { const s = v / 255; return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4; });
  const luminance = linear[0] * 0.2126 + linear[1] * 0.7152 + linear[2] * 0.0722;
  // The better of black/white always exceeds 4.5:1 against an opaque sRGB colour.
  const text = (luminance + 0.05) / 0.05 >= 1.05 / (luminance + 0.05) ? '#000000' : '#ffffff';
- const border = '#' + rgb.map(v => Math.round(v * 0.6).toString(16).padStart(2, '0')).join('');
+ const border = '#' + base.map(v => Math.round(v * 0.75 + 255 * 0.25).toString(16).padStart(2, '0')).join('');
  return { background, text, border };
 }
 
