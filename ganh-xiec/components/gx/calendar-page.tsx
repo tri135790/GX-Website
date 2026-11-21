@@ -27,7 +27,7 @@ type Props = {
 };
 export function CalendarPage({ title: pageTitle = 'Lịch làm việc', onCreate, showCapacity=true, data, busy, employeeFilter, setEmployeeFilter, openLesson, openWeekly, readOnly = false, ownEmployeeId, onRange }: Props) {
     const calendar = useRef<FullCalendar>(null);
-    const [view, setView] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 700px)').matches ? 'listWeek' : 'dayGridMonth');
+    const [view, setView] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 700px)').matches ? 'listWeek' : 'timeGridWeek');
     const [title, setTitle] = useState(''), [range, setRange] = useState({ start: monday(), end: addDays(monday(), 7) }), [expanded, setExpanded] = useState(false), [showHours, setShowHours] = useState(false), [tasksOpen, setTasksOpen] = useState(false), [student, setStudent] = useState(''), [mode, setMode] = useState(''), [status, setStatus] = useState(''), [kind,setKind]=useState('');
     const filtered = data.lessons.map(l=>effectiveLesson(l)).filter(l => (!employeeFilter || (l.employee_id === employeeFilter||l.support_employee_ids?.includes(employeeFilter))) && (!student || l.student_id === student) && (!mode || l.location === mode) && (!status || l.status === status) && (!kind || (l.work_kind||'legacy')===kind));
     const ranged = filtered.filter(l => inRange(l, range.start, range.end)), sum = totals(ranged.filter(l=>!employeeFilter||l.employee_id===employeeFilter)), filterCount = [employeeFilter, student, mode, status, kind].filter(Boolean).length;
