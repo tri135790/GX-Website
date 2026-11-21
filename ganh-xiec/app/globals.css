@@ -59,20 +59,25 @@
 /* Compact cards: no forced calendar width, no text spilling into a neighbour. */
 .calendar-panel .calendar-width,.calendar-panel .calendar-grid .fc { min-width:0; width:100%; max-width:100%; }
 .calendar-panel .fc .fc-scrollgrid { table-layout:fixed; width:100%; }
-.calendar-panel .calendar-week-grid .fc { min-width:1680px; }
-.calendar-panel .calendar-week-grid .fc .fc-timegrid-slot { height:48px; }
+.calendar-panel .calendar-week-grid { overflow-x:hidden; }
+.calendar-panel .calendar-week-grid .fc { min-width:0; width:100%; }
+.calendar-panel .calendar-week-grid .fc .fc-timegrid-slot { height:28px; }
 .calendar-panel .fc .calendar-event { overflow:visible; padding:3px; }
 .calendar-panel .fc .calendar-event strong,
 .calendar-panel .fc .calendar-event small,
 .calendar-panel .fc .calendar-event > span { min-width:0; max-width:100%; white-space:normal; overflow:visible; text-overflow:clip; overflow-wrap:anywhere; }
 .calendar-panel .fc .fc-timegrid-event .fc-event-main { container-type:inline-size; }
 .calendar-panel .fc .fc-timegrid-event .calendar-event { gap:1px; height:100%; overflow:hidden; }
-.calendar-panel .calendar-week-grid .fc .fc-timegrid-event .calendar-event { gap:3px; padding:4px; }
+.calendar-panel .calendar-week-grid .fc .fc-timegrid-event .calendar-event { gap:1px; padding:2px 3px; }
 .calendar-panel .fc .month-vertical-event { overflow:visible; white-space:normal; }
 .calendar-panel .fc .month-vertical-event .fc-event-main { width:100%; min-width:0; overflow:visible; }
 .calendar-panel .fc .month-vertical-event .calendar-event { height:auto; min-width:0; max-width:100%; overflow:visible; }
 .calendar-panel .fc .month-vertical-event .calendar-event strong { font-size:11px; line-height:1.35; }
 .calendar-panel .fc .month-vertical-event .calendar-event small { font-size:10px; }
+.calendar-panel .calendar-week-grid .fc .calendar-event { display:flex; flex-direction:column; justify-content:center; white-space:nowrap; }
+.calendar-panel .calendar-week-grid .fc .calendar-event-summary { display:block; min-width:0; max-width:100%; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; line-height:1.2; }
+.calendar-panel .calendar-week-grid .fc .calendar-event small { display:block; max-width:100%; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:10px; line-height:1.1; }
+.calendar-panel .calendar-legend { display:none; }
 @container (max-width: 130px) {
  .calendar-panel .fc .calendar-event strong { font-size:11px; }
  .calendar-panel .fc .calendar-event small { font-size:10px; }
