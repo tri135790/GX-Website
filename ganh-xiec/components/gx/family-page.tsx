@@ -1,10 +1,9 @@
-import { useState } from 'react';
-import type { Data } from '@/lib/gx/types';
-import { DirectoryPage } from './directory-page';
-import { dateText, timeText } from '@/lib/gx/domain';
-export function FamilyPage({data,add,openStudent,openTeacher,openWork}:{data:Data;add:(type:'student'|'employee')=>void;openStudent:(id:string)=>void;openTeacher:(id:string)=>void;openWork:(id:string)=>void}) {
- const [section,setSection]=useState<'offline'|'online'|'teachers'>('offline');
- const [teacher,setTeacher]=useState('');
- const filtered={...data,students:data.students.filter(s=>(s.service_modes||['offline']).includes(section as 'online'|'offline'))};
- return <><div className="page-heading"><h1>Hồ sơ</h1></div><div className="tabs" aria-label="Nhóm hồ sơ">{[['offline','OFFLINE'],['online','ONLINE'],['teachers','Giáo viên']].map(([id,title])=><button key={id} className={section===id?'active':''} onClick={()=>setSection(id as typeof section)}>{title}</button>)}</div><DirectoryPage key={section} kind={section==='teachers'?'employees':'students'} data={section==='teachers'?data:filtered} add={()=>add(section==='teachers'?'employee':'student')} open={section==='teachers'?openTeacher:openStudent} openStudent={openStudent} openWork={openWork}/>{section==='teachers'&&<section className="panel"><div className="panel-heading"><h2>Báo cáo công việc</h2><select aria-label="Giáo viên báo cáo" value={teacher} onChange={e=>setTeacher(e.target.value)}><option value="">Tất cả giáo viên</option>{data.employees.map(e=><option key={e.id} value={e.id}>{e.name}</option>)}</select></div>{data.lessons.filter(l=>l.report_content&&(!teacher||l.employee_id===teacher)).sort((a,b)=>b.starts_at.localeCompare(a.starts_at)).map(l=><button className="task-row" key={l.id} onClick={()=>openWork(l.id)}><div><strong>{dateText(l.starts_at)} · {timeText(l.starts_at)} · {data.employees.find(e=>e.id===l.employee_id)?.name}</strong><p>{l.report_content}</p><small>{l.report_status==='submitted'?'Đã nộp':'Bản nháp'}</small></div></button>)}</section>}</>;
+import {useState} from 'react';
+import type {Data,Teacher,Student} from '@/lib/gx/types';
+import type {Change} from '@/lib/gx/client';
+import {DirectoryPage} from './directory-page';
+import {TeacherProfiles} from './teacher-profiles';
+export function FamilyPage({data,add,openStudent,openWork,createWork,save,remove,busy}:{data:Data;add:(type:'student')=>void;openStudent:(id:string)=>void;openWork:(id:string)=>void;createWork:(id:string)=>void;save:(c:Change[],r?:Change[])=>Promise<void>;remove:(kind:'student'|'teacher',record:Student|Teacher)=>Promise<void>;busy:boolean}){
+ const [section,setSection]=useState('offline');
+ return <><div className="page-heading"><h1>Hồ sơ</h1></div><div className="tabs">{[['offline','OFFLINE'],['online','ONLINE'],['teachers','Giáo viên']].map(([id,title])=><button key={id} className={section===id?'active':''} onClick={()=>setSection(id)}>{title}</button>)}</div>{section==='teachers'?<TeacherProfiles data={data} busy={busy} save={save} remove={remove} openWork={openWork} createWork={createWork}/>:<DirectoryPage key={section} kind="students" data={{...data,students:data.students.filter(s=>s.active&&(s.service_modes||['offline']).includes(section as 'offline'|'online'))}} add={()=>add('student')} open={openStudent} openStudent={openStudent} openWork={openWork}/>}</>;
 }

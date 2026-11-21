@@ -1,12 +1,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { emptyData, type Data, type Lesson, type Employee, type Student } from './types';
-export type CalendarRow = Pick<Lesson, 'id'|'student_id'|'employee_id'|'starts_at'|'ends_at'|'mode'|'status'|'actual_minutes'|'work_kind'|'location'|'all_day'|'work_group'|'support_employee_ids'|'primary_pending'|'report_status'> & {student_name:string;employee_name:string;color:string;employee_active?:boolean};
-export type Workspace = Pick<Data,'work_locations'|'students'|'assignments'|'goals'|'weekly'|'lessons'> & {employees:Pick<Employee,'id'|'name'|'color'|'active'>[];authors:{id:string;name:string}[]};
+export type CalendarRow = Pick<Lesson, 'id'|'student_id'|'employee_id'|'starts_at'|'ends_at'|'mode'|'status'|'actual_minutes'|'work_kind'|'location'|'all_day'|'work_group'|'support_employee_ids'|'primary_pending'|'report_status'|'teacher_ids'|'bm'> & {student_name:string;employee_name:string;color:string;employee_active?:boolean};
+export type Workspace = Pick<Data,'teachers'|'teacher_goals'|'teacher_weekly'|'work_locations'|'students'|'assignments'|'goals'|'weekly'|'lessons'> & {employees:Pick<Employee,'id'|'name'|'color'|'active'>[];authors:{id:string;name:string}[]};
 export async function loadEmployee(client:SupabaseClient, start:string, end:string) {
     const calendarPromise = (async () => {
         const rows: CalendarRow[] = [];
         for(let startRow=0;;startRow+=1000) {
-            const {data,error}=await client.rpc('employee_calendar_v2',{p_start:start+'T00:00:00+07:00',p_end:end+'T00:00:00+07:00'}).order('starts_at').order('id').range(startRow,startRow+999);
+            const {data,error}=await client.rpc('employee_calendar_v3',{p_start:start+'T00:00:00+07:00',p_end:end+'T00:00:00+07:00'}).order('starts_at').order('id').range(startRow,startRow+999);
             if(error) throw error;
             rows.push(...data);
             if(data.length<1000) return rows;
@@ -27,7 +27,7 @@ export function calendarData(workspace:Workspace, rows:CalendarRow[]):Data {
         employees.set(row.employee_id,{id:row.employee_id,name:row.employee_name,color:row.color,version:0,email:'',phone:'',specialty:'',active:row.employee_active??true});
         if(row.student_id)students.set(row.student_id,{id:row.student_id,name:row.student_name,version:0,birth_date:'',start_date:'',notes:'',active:true});
     }
-    return {...emptyData,work_locations:workspace.work_locations||[],employees:[...employees.values()],students:[...students.values()],lessons:rows.map(row=>({...row,version:0,location:row.location||'',reason:'',content:'',note:'',series_id:null}))};
+    return {...emptyData,teachers:workspace.teachers||[],teacher_goals:workspace.teacher_goals||[],teacher_weekly:workspace.teacher_weekly||[],work_locations:workspace.work_locations||[],employees:[...employees.values()],students:[...students.values()],lessons:rows.map(row=>({...row,version:0,location:row.location||'',reason:'',content:'',note:'',series_id:null}))};
 }
 export async function saveEmployee(client:SupabaseClient,table:string,record:Record<string,unknown>){
     const {error}=await client.rpc('employee_save',{p_table:table,p_record:record});

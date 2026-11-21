@@ -11,11 +11,13 @@ export function needsReport(l:Lesson, now=Date.now()) { return l.status!=='cance
 export function totals(list: Lesson[]) { return list.reduce((a,original)=>{const l=effectiveLesson(original);if(!l.primary_pending&&l.status!=='cancelled'&&l.work_kind!=='leave') a.planned+=minutes(l); if(!l.primary_pending&&l.status==='completed'&&l.work_kind!=='leave') {a.actual+=l.actual_minutes;a[l.mode]+=l.actual_minutes; if(l.work_kind==='consultation')a.consultation+=l.actual_minutes;else if(l.work_kind==='therapy')a.therapy+=l.actual_minutes;else {a.other+=l.actual_minutes;if(!l.work_kind||l.work_kind==='legacy')a.unclassified+=l.actual_minutes;}} return a;},{planned:0,actual:0,online:0,offline:0,consultation:0,therapy:0,other:0,unclassified:0}); }
 export function workCapacity(start:string,end:string,count=1){let days=0;for(let d=start;d<end;d=addDays(d,1)){const day=new Date(d+'T12:00:00+07:00').getUTCDay();if(day!==0&&day!==6)days++;}return days*360*count;}
 export function hours(m: number): string { return (m/60).toLocaleString('vi-VN',{maximumFractionDigits:1}); }
-export function overlaps(a: Lesson,b: Lesson): boolean { return a.id!==b.id&&a.status!=='cancelled'&&b.status!=='cancelled'&&((!a.primary_pending&&!b.primary_pending&&a.employee_id===b.employee_id)||(!!a.student_id&&a.student_id===b.student_id))&&Date.parse(a.starts_at)<Date.parse(b.ends_at)&&Date.parse(b.starts_at)<Date.parse(a.ends_at); }
+export function overlaps(a: Lesson,b: Lesson): boolean { return a.id!==b.id&&a.status!=='cancelled'&&b.status!=='cancelled'&&((!a.primary_pending&&!b.primary_pending&&a.employee_id===b.employee_id)||(!!a.student_id&&a.student_id===b.student_id)||(a.teacher_ids||[]).some(id=>b.teacher_ids?.includes(id)))&&Date.parse(a.starts_at)<Date.parse(b.ends_at)&&Date.parse(b.starts_at)<Date.parse(a.ends_at); }
 export function validateLesson(l: Lesson, list: Lesson[]) {
  if(l.status==='absent')throw Error('Chọn Hủy và ghi lý do học sinh vắng.');
  const kind=l.work_kind||'legacy';
- if(!l.employee_id || (['legacy','consultation','therapy'].includes(kind)&&!l.student_id))throw Error('Chọn nhân sự và học sinh.');
+ if(!l.employee_id || (['legacy','therapy'].includes(kind)&&!l.student_id) || (kind==='consultation'&&!l.student_id&&!l.teacher_ids?.length))throw Error('Chọn Incharge và hồ sơ.');
+ if(l.teacher_ids?.length&&(kind!=='consultation'||l.student_id))throw Error('Tư vấn chỉ chọn học sinh hoặc giáo viên.');
+ if(l.bm&&kind!=='therapy')throw Error('BM chỉ áp dụng Trị liệu.');
  if(!Number.isFinite(Date.parse(l.starts_at))||!Number.isFinite(Date.parse(l.ends_at))||minutes(l)<=0)throw Error('Giờ kết thúc phải sau giờ bắt đầu.');
  if(!l.all_day&&localDate(l.starts_at)!==localDate(l.ends_at))throw Error('Giờ làm phải trong cùng một ngày.');
  if(['consultation','therapy'].includes(kind)&&!l.location_id)throw Error('Chọn địa điểm.');
