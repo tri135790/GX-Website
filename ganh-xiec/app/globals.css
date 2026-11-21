@@ -72,12 +72,13 @@
 .calendar-panel .fc .calendar-event > span { min-width:0; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; overflow-wrap:normal; }
 .calendar-panel .fc .fc-timegrid-event .fc-event-main { container-type:inline-size; }
 .calendar-panel .fc .fc-timegrid-event .calendar-event { gap:1px; }
-.calendar-panel .fc .month-horizontal-card > span { display:none; }
+.calendar-panel .fc .month-horizontal-card > span { display:block; }
 .calendar-panel .fc .month-horizontal-card strong { font-size:11px; line-height:1.3; }
 .calendar-panel .fc .month-horizontal-card small { font-size:10px; }
+.calendar-panel .fc .month-horizontal-card { min-height:64px; overflow:hidden; }
+.calendar-panel .fc .month-horizontal-card > span { width:100%; max-width:100%; }
 .calendar-panel .fc .month-horizontal-event { margin:3px 1px; }
 @container (max-width: 130px) {
- .calendar-panel .fc .calendar-event > span { display:none; }
  .calendar-panel .fc .calendar-event strong { font-size:11px; }
  .calendar-panel .fc .calendar-event small { font-size:10px; }
 }
