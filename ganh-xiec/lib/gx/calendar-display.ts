@@ -1,5 +1,4 @@
 import type { Lesson } from './types';
-import { localDate } from './domain';
 
 export function calendarColors(color?: string) {
  let background = /^#[0-9a-f]{6}$/i.test(color || '') ? color! : '#386b9b';
@@ -22,24 +21,4 @@ export function calendarCards(lessons: Lesson[], employeeFilter: string): Calend
   ? [lesson.employee_id, ...(lesson.support_employee_ids || [])] : [lesson.employee_id])
   .filter(id => !employeeFilter || id === employeeFilter || lesson.work_kind !== 'meeting')
   .map(displayEmployee => ({lesson, displayEmployee})));
-}
-
-// Connected overlapping intervals share one horizontal row inside their month day.
-export function monthCardRows(cards: CalendarCard[]): CalendarCard[][] {
- const days=new Map<string,CalendarCard[]>(), rows:CalendarCard[][]=[];
- for(const card of cards){
-  if(card.lesson.all_day){rows.push([card]);continue;}
-  const day=localDate(card.lesson.starts_at);days.set(day,[...(days.get(day)||[]),card]);
- }
- for(const dayCards of days.values()){
-  dayCards.sort((a,b)=>Date.parse(a.lesson.starts_at)-Date.parse(b.lesson.starts_at)||a.lesson.id.localeCompare(b.lesson.id));
-  let row:CalendarCard[]=[],end=0;
-  for(const card of dayCards){
-   const start=Date.parse(card.lesson.starts_at);
-   if(row.length&&start>=end){rows.push(row);row=[];end=0;}
-   row.push(card);end=Math.max(end,Date.parse(card.lesson.ends_at));
-  }
-  if(row.length)rows.push(row);
- }
- return rows;
 }

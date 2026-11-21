@@ -56,35 +56,23 @@
 .calendar-panel .fc .event-cancelled { opacity:1; text-decoration:line-through; }
 .calendar-person-legend { padding:4px 9px; border:2px solid; border-radius:7px; }
 
-/* Month view groups overlapping appointments into an actual horizontal row. */
-.calendar-panel .fc .month-horizontal-event { background:transparent; border:0; padding:0; margin:4px; cursor:default; }
-.calendar-panel .fc .month-horizontal-event .fc-event-main { min-width:0; width:100%; }
-.calendar-panel .fc .month-horizontal-row { display:grid; gap:2px; width:100%; max-width:100%; min-width:0; overflow:hidden; align-items:stretch; }
-.calendar-panel .fc .month-horizontal-card { width:100%; min-width:0; height:auto; min-height:52px; border:1px solid; text-align:left; cursor:pointer; font:inherit; container-type:inline-size; }
-
-
 /* Compact cards: no forced calendar width, no text spilling into a neighbour. */
 .calendar-panel .calendar-width,.calendar-panel .calendar-grid .fc { min-width:0; width:100%; max-width:100%; }
 .calendar-panel .fc .fc-scrollgrid { table-layout:fixed; width:100%; }
-.calendar-panel .fc .calendar-event { overflow:hidden; padding:3px; }
+.calendar-panel .fc .calendar-event { overflow:visible; padding:3px; }
 .calendar-panel .fc .calendar-event strong,
 .calendar-panel .fc .calendar-event small,
-.calendar-panel .fc .calendar-event > span { min-width:0; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; overflow-wrap:normal; }
+.calendar-panel .fc .calendar-event > span { min-width:0; max-width:100%; white-space:normal; overflow:visible; text-overflow:clip; overflow-wrap:anywhere; }
 .calendar-panel .fc .fc-timegrid-event .fc-event-main { container-type:inline-size; }
-.calendar-panel .fc .fc-timegrid-event .calendar-event { gap:1px; }
-.calendar-panel .fc .month-horizontal-card > span { display:block; }
-.calendar-panel .fc .month-horizontal-card strong { font-size:11px; line-height:1.3; }
-.calendar-panel .fc .month-horizontal-card small { font-size:10px; }
-.calendar-panel .fc .month-horizontal-card { min-height:64px; overflow:hidden; }
-.calendar-panel .fc .month-horizontal-card > span { width:100%; max-width:100%; }
-.calendar-panel .fc .month-horizontal-event { margin:3px 1px; }
+.calendar-panel .fc .fc-timegrid-event .calendar-event { gap:1px; height:100%; overflow:hidden; }
+.calendar-panel .fc .month-vertical-event { overflow:visible; white-space:normal; }
+.calendar-panel .fc .month-vertical-event .fc-event-main { width:100%; min-width:0; overflow:visible; }
+.calendar-panel .fc .month-vertical-event .calendar-event { height:auto; min-width:0; max-width:100%; overflow:visible; }
+.calendar-panel .fc .month-vertical-event .calendar-event strong { font-size:11px; line-height:1.35; }
+.calendar-panel .fc .month-vertical-event .calendar-event small { font-size:10px; }
 @container (max-width: 130px) {
  .calendar-panel .fc .calendar-event strong { font-size:11px; }
  .calendar-panel .fc .calendar-event small { font-size:10px; }
-}
-@container (max-width: 45px) {
- .calendar-panel .fc .calendar-event small,
- .calendar-panel .fc .month-horizontal-card small { display:none; }
 }
 @media(max-width:700px) {
  .calendar-panel .fc .fc-col-header-cell-cushion { font-size:10px; padding:3px 0; white-space:normal; }
