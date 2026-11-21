@@ -195,7 +195,7 @@ declare rid uuid;tid uuid;expected integer;oldrow jsonb;k text;allowed text[];be
  execute format('select to_jsonb(x) from public.%I x where id=$1 for update',p_table) into oldrow using rid;
  if coalesce((oldrow->>'version')::integer,0)<>expected or (oldrow is not null and (oldrow->>'teacher_id')::uuid<>tid) then raise exception 'Dữ liệu đã thay đổi.' using errcode='40001';end if;
  if p_table='teacher_goals' then
- if oldrow is null then insert into public.teacher_goals(id,teacher_id,title,status) values(rid,tid,p_record->>'title',p_record->>'status);
+ if oldrow is null then insert into public.teacher_goals(id,teacher_id,title,status) values(rid,tid,p_record->>'title',p_record->>'status');
  else update public.teacher_goals set title=p_record->>'title',status=p_record->>'status' where id=rid;end if;
  else
  if oldrow is not null and oldrow->>'week_start' is distinct from p_record->>'week_start' then raise exception 'Không được đổi tuần.';end if;
