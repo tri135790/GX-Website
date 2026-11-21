@@ -98,7 +98,7 @@
 .employee-color-preview { display:flex; flex-direction:column; gap:4px; padding:12px; border:1px solid; border-radius:9px; overflow-wrap:anywhere; }
 
 /* Fixed-width week grid with a nine-hour vertical viewport. */
-.fc .fc-timegrid-slot{height:32px}.fc .fc-timegrid-axis-cushion,.fc .fc-timegrid-slot-label-cushion{width:100%;text-align:center}
+.fc .fc-timegrid-slot{height:32px}.calendar-panel .fc .fc-timegrid-axis-cushion,.calendar-panel .fc .fc-timegrid-slot-label-cushion{display:inline-block;width:auto;min-width:76px;padding-inline:10px;text-align:center;white-space:nowrap}
 .fc .fc-col-header-cell{background:transparent}.calendar-day-heading{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0}.calendar-day-heading strong{font-size:24px}.fc .fc-timegrid-event{border-radius:10px;overflow:hidden}.profile-group{display:flex;gap:20px;align-items:center;border:1px solid var(--border,#ddd);border-radius:10px;padding:12px 16px;margin:0}.profile-group legend{padding:0 5px}.panel-body table{width:100%;text-align:left}.panel-body>label{display:block;margin-top:18px}.panel-body>.row{flex-wrap:wrap;gap:20px}
 
 .profile-group{flex-wrap:wrap}.fc .fc-col-header-cell-cushion{background:transparent}
