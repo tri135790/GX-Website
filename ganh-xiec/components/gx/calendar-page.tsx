@@ -60,7 +60,7 @@ export function CalendarPage({ title: pageTitle = 'Lịch làm việc', onCreate
  const location=l.location&&l.location!=='—'?l.location:'Chưa có địa điểm';
  const slot=l.all_day?'':`${timeText(l.starts_at)}–${timeText(l.ends_at)}`;
  const student=l.student_id?studentName(l.student_id):l.teacher_ids?.length?l.teacher_ids.map(id=>data.teachers.find(t=>t.id===id)?.short_name||data.teachers.find(t=>t.id===id)?.name||'Giáo viên').join(', '):workNames[l.work_kind||'legacy'];
- const summary=`${student} - ${person} · ${workNames[l.work_kind||'legacy']}${l.bm?' · BM':''}`;
+ const summary=[location,...(l.student_id||l.teacher_ids?.length?[student]:[]),person].join(' - ')+(l.bm?' · BM':'');
  const label=`${summary} - ${slot} - ${statusNames[l.status]}`;
  return <div className="calendar-event" tabIndex={0} aria-label={label} title={label} style={{backgroundColor:colors.background,color:colors.text,borderColor:colors.border}}>
  <span className="calendar-event-summary">{summary}</span><small>{slot}</small></div>;
