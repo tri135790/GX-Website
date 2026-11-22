@@ -185,3 +185,8 @@ Lịch mới có một người chính (`employee_id`) và danh sách phụ (`su
 `employee_calendar_v2` cung cấp người tham gia cho lịch; `update_my_work` cho người chính xác nhận hoàn thành hoặc lưu/nộp báo cáo, kiểm tra phiên bản và quyền tại server. Báo cáo độc lập với trạng thái hoàn thành. Nội dung/ghi chú cũ không tự biến thành báo cáo đã nộp. Nhân sự bị ẩn sẽ bị khóa profile và thu hồi lời mời chưa dùng; phải xử lý phân công/lịch chưa hoàn thành trước khi ẩn.
 
 Hồ sơ hỗ trợ ONLINE/OFFLINE đồng thời và các trường liên hệ tùy chọn. Giáo viên dùng chung hồ sơ Nhân sự. Không triển khai bài tập trong đợt này. Kiểm tra TypeScript; không chạy test tự động theo yêu cầu.
+
+
+## Cập nhật 009: phân công lịch và Họp
+
+Các quy tắc người phụ không giữ giờ/không tính giờ ở phần migration 007 phía trên chỉ mô tả phiên bản cũ. Từ 009, Họp hỗ trợ nhiều người trong một lịch; mỗi người giữ giờ và được tính giờ. Admin quản lý báo cáo Họp nhiều người. Áp dụng 009 sau 008 và trước frontend mới, theo [MIGRATION-009.md](MIGRATION-009.md). Không tự áp dụng migration production khi push code.

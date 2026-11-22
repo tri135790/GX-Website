@@ -15,7 +15,7 @@ Mở http://localhost:5173. Khi chưa cấu hình Supabase, ứng dụng hiện 
 
 Xem hướng dẫn từng bước, kiểm thử và deploy trong [docs/DEPLOY.md](docs/DEPLOY.md).
 
-1. Database: chạy lần lượt migration `001` đến `008` trong `supabase/migrations/` cho project mới. Database hiện có chỉ chạy các migration chưa áp dụng, đúng thứ tự; không chạy lại migration cũ. Áp dụng `008_teachers_incharge_profiles.sql` trước khi phát hành frontend này.
+1. Database: chạy lần lượt migration `001` đến `009` trong `supabase/migrations/` cho project mới. Database hiện có chỉ chạy các migration chưa áp dụng, đúng thứ tự; không chạy lại migration cũ. Áp dụng `009_meeting_participants.sql` sau 008 và trước khi phát hành frontend này; xem `docs/MIGRATION-009.md`.
 2. Frontend: copy `.env.example` thành `.env.local`, điền `VITE_SUPABASE_URL` và `VITE_SUPABASE_PUBLISHABLE_KEY` (`sb_publishable_...`).
 3. Supabase Auth: cấu hình Site URL/Redirect URLs, OAuth và SMTP.
 4. Deploy Edge Function `invitations`, đặt `APP_URL` bằng URL website. Secret chỉ ở Supabase.

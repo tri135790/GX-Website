@@ -23,7 +23,7 @@ test('elapsed scheduled work requires manual completion even with a legacy auto-
  assert.equal(totals([{...work,status:'cancelled'}]).actual,0);
  assert.equal(totals([{...completed,work_kind:'leave'}]).actual,0);
 });
-test('categories reconcile and a shared meeting counts only its confirmed primary',()=>{
+test('categories reconcile and a shared meeting counts once in calendar duration',()=>{
  const items:Lesson[]=[
   {...l,work_kind:'consultation',status:'completed',actual_minutes:60},
   {...l,id:'2',work_kind:'therapy',status:'completed',actual_minutes:120},
@@ -35,12 +35,21 @@ test('categories reconcile and a shared meeting counts only its confirmed primar
  assert.equal(totals([{...items[2],primary_pending:true}]).actual,0);
  assert.equal(totals([{...items[2],primary_pending:true}]).planned,0);
 });
-test('support participants may overlap while primary staff and students remain protected',()=>{
+test('all meeting participants and students are protected',()=>{
  const meeting:Lesson={...l,student_id:'',support_employee_ids:['e2'],work_kind:'meeting'};
- assert.equal(overlaps(meeting,{...l,id:'2',employee_id:'e2',student_id:'s2'}),false);
+ assert.equal(overlaps(meeting,{...l,id:'2',employee_id:'e2',student_id:'s2'}),true);
  assert.equal(overlaps(meeting,{...l,id:'2',employee_id:'e1',student_id:'s2'}),true);
  assert.equal(overlaps(l,{...l,id:'2',employee_id:'e2'}),true);
 });
 test('non-student work does not conflict across different people',()=>{assert.equal(overlaps({...l,student_id:''},{...l,id:'2',student_id:'',employee_id:'e2'}),false);});
 
 test('overtime on one day cannot erase a full-day absence or another employee vacancy',()=>{const work={...l,status:'completed' as const,actual_minutes:720};const result=workUtilization([work],'2026-11-02','2026-11-04',['e1','e2']);assert.equal(result.free,1080);assert.equal(result.over,360);});
+
+test('meeting hours accrue to every participant while calendar duration stays singular',()=>{
+ const meeting:Lesson={...l,student_id:'',work_kind:'meeting',support_employee_ids:['e2'],status:'completed',actual_minutes:60};
+ assert.equal(totals([meeting]).actual,60);
+ assert.deepEqual(workUtilization([meeting],'2026-11-02','2026-11-03',['e1','e2']),{free:600,over:0});
+ assert.equal(overlaps(meeting,{...meeting,id:'other',employee_id:'e3',support_employee_ids:['e2']}),true);
+ assert.equal(overlaps(meeting,{...meeting,id:'other',employee_id:'e2',support_employee_ids:[],work_kind:'leave'}),true);
+ assert.equal(overlaps(meeting,{...meeting,id:'other',starts_at:meeting.ends_at,ends_at:'2026-11-02T10:00:00+07:00'}),false);
+});
