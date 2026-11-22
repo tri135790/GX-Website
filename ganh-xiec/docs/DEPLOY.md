@@ -190,3 +190,8 @@ Hồ sơ hỗ trợ ONLINE/OFFLINE đồng thời và các trường liên hệ 
 ## Cập nhật 009: phân công lịch và Họp
 
 Các quy tắc người phụ không giữ giờ/không tính giờ ở phần migration 007 phía trên chỉ mô tả phiên bản cũ. Từ 009, Họp hỗ trợ nhiều người trong một lịch; mỗi người giữ giờ và được tính giờ. Admin quản lý báo cáo Họp nhiều người. Áp dụng 009 sau 008 và trước frontend mới, theo [MIGRATION-009.md](MIGRATION-009.md). Không tự áp dụng migration production khi push code.
+
+
+## Cập nhật 010: Tư vấn & Trị liệu
+
+Áp dụng 009 và 010 trước frontend mới. Loại kết hợp phân vai từng người, tính đủ giờ riêng nhưng không nhân thời lượng buổi. Xem [MIGRATION-010.md](MIGRATION-010.md) cho quy tắc dữ liệu, RPC v4, kiểm tra lỗi mất người tham gia Họp và bước nâng cấp.

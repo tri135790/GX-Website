@@ -1,5 +1,5 @@
 'use client';
-import { participantIds, hasParticipant, multiMeeting } from '@/lib/gx/domain';
+import { participantIds, hasParticipant, multiParticipantWork } from '@/lib/gx/domain';
 import { calendarColors, calendarCards } from '@/lib/gx/calendar-display';
 import { useEffect, useRef, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
@@ -31,11 +31,11 @@ export function CalendarPage({ title: pageTitle = 'Lịch làm việc', onCreate
     const [view, setView] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 700px)').matches ? 'listWeek' : 'timeGridWeek');
     const [title, setTitle] = useState(''), [range, setRange] = useState({ start: monday(), end: addDays(monday(), 7) }), [expanded, setExpanded] = useState(false), [showHours, setShowHours] = useState(false), [tasksOpen, setTasksOpen] = useState(false), [student, setStudent] = useState(''), [mode, setMode] = useState(''), [status, setStatus] = useState(''), [kind,setKind]=useState('');
     const filtered = data.lessons.map(l=>effectiveLesson(l)).filter(l => (!employeeFilter || hasParticipant(l,employeeFilter)) && (!student || l.student_id === student) && (!mode || l.location === mode) && (!status || l.status === status) && (!kind || (l.work_kind||'legacy')===kind));
-    const ranged = filtered.filter(l => inRange(l, range.start, range.end)), sum = totals(ranged.filter(l=>!employeeFilter||hasParticipant(l,employeeFilter))), filterCount = [employeeFilter, student, mode, status, kind].filter(Boolean).length;
+    const ranged = filtered.filter(l => inRange(l, range.start, range.end)), sum = totals(ranged.filter(l=>!employeeFilter||hasParticipant(l,employeeFilter)),employeeFilter||undefined), filterCount = [employeeFilter, student, mode, status, kind].filter(Boolean).length;
     const capacityStaff=data.employees.filter(e=>e.active&&(!employeeFilter||e.id===employeeFilter));
     const allRanged=data.lessons.filter(l=>inRange(l,range.start,range.end)&&(!employeeFilter||hasParticipant(l,employeeFilter)));
     const utilization=workUtilization(allRanged,range.start,range.end,capacityStaff.map(e=>e.id));
-    const pending = data.lessons.filter(l=>needsReport(l)&&(!ownEmployeeId||(l.employee_id===ownEmployeeId&&!multiMeeting(l)))).sort((a,b)=>a.starts_at.localeCompare(b.starts_at));
+    const pending = data.lessons.filter(l=>needsReport(l)&&(!ownEmployeeId||(l.employee_id===ownEmployeeId&&!multiParticipantWork(l)))).sort((a,b)=>a.starts_at.localeCompare(b.starts_at));
     const missing = data.students.filter(s => s.active && !data.weekly.some(w => w.student_id === s.id && w.week_start === monday()));
     const studentName = (id: string) => data.students.find(s => s.id === id)?.short_name || data.students.find(s => s.id === id)?.name || 'Học sinh';
     const employeeName = (id: string) => data.employees.find(e => e.id === id)?.name || 'Nhân sự';
@@ -61,7 +61,7 @@ export function CalendarPage({ title: pageTitle = 'Lịch làm việc', onCreate
  const location=l.location&&l.location!=='—'?l.location:'Chưa có địa điểm';
  const slot=l.all_day?'':`${timeText(l.starts_at)}–${timeText(l.ends_at)}`;
  const student=l.student_id?studentName(l.student_id):l.teacher_ids?.length?l.teacher_ids.map(id=>data.teachers.find(t=>t.id===id)?.short_name||data.teachers.find(t=>t.id===id)?.name||'Giáo viên').join(', '):workNames[l.work_kind||'legacy'];
- const summary=[location,...(l.student_id||l.teacher_ids?.length?[student]:[]),person].join(' - ')+(l.bm?' · BM':'');
+ const summary=l.work_kind==='leave'?person:[location,...(l.student_id||l.teacher_ids?.length?[student]:[]),person].join(' - ')+(l.bm?' · BM':'');
  const label=`${summary} - ${slot} - ${statusNames[l.status]}`;
  return <div className="calendar-event" tabIndex={0} aria-label={label} title={label} style={{backgroundColor:colors.background,color:colors.text,borderColor:colors.border}}>
  <span className="calendar-event-summary">{summary}</span><small>{slot}</small></div>;

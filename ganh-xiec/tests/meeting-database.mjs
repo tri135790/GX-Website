@@ -12,7 +12,7 @@ create function auth.uid() returns uuid language sql as $$select nullif(current_
 create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,last_sign_in_at timestamptz,raw_user_meta_data jsonb default '{}'::jsonb);`);
 
 const migrationDir=new URL('../supabase/migrations/',import.meta.url);
-for(const name of (await readdir(migrationDir)).filter(n=>n.endsWith('.sql')).sort()) await db.exec(await readFile(new URL(name,migrationDir),'utf8'));
+for(const name of (await readdir(migrationDir)).filter(n=>n.endsWith('.sql')&&n<'009').sort()) await db.exec(await readFile(new URL(name,migrationDir),'utf8'));
 const id=()=>crypto.randomUUID(),admin=id(),user=id(),e1=id(),e2=id(),e3=id(),student=id();
 const login=async uid=>{await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[uid]);await db.exec('set role authenticated');};
 const change=(table,record)=>({table,record:{version:0,...record}});
@@ -21,6 +21,15 @@ await db.query('insert into auth.users(id,email,email_confirmed_at) values($1,$2
 await login(admin);
 await save([...[e1,e2,e3].map((id,i)=>change('employees',{id,name:'Staff '+i})),change('students',{id:student,name:'Child',birth_date:'2020-01-01',start_date:'2026-01-01'}),change('assignments',{id:id(),student_id:student,employee_id:e1,responsibility:'primary'})]);
 const work=(extra={})=>({id:id(),employee_id:e1,work_kind:'meeting',student_id:null,starts_at:'2026-11-02T08:00:00+07:00',ends_at:'2026-11-02T09:00:00+07:00',status:'scheduled',mode:'offline',location:'—',...extra});
+// Reproduce the silent participant loss on 008, then upgrade without rewriting history.
+const oldMeeting=work({support_employee_ids:[e2],status:'cancelled',reason:'Upgrade regression'});
+await save([change('lessons',oldMeeting)]);
+assert.deepEqual((await db.query('select support_employee_ids from public.lessons where id=$1',[oldMeeting.id])).rows[0].support_employee_ids,[]);
+await db.exec('reset role');
+for(const name of ['009_meeting_participants.sql','010_consultation_therapy.sql'])await db.exec(await readFile(new URL(name,migrationDir),'utf8'));
+await login(admin);
+assert.deepEqual((await db.query('select support_employee_ids from public.lessons where id=$1',[oldMeeting.id])).rows[0].support_employee_ids,[]);
+console.log('PASS reproduced 008 silent loss and upgraded 008 → 009 → 010 without inventing old participants');
 const meeting=work({support_employee_ids:[e2]});await save([change('lessons',meeting)]);
 assert.equal((await db.query('select count(*)::int n from public.lesson_participants where lesson_id=$1',[meeting.id])).rows[0].n,2);
 for(const extra of [{employee_id:e2},{employee_id:e3,support_employee_ids:[e2]},{employee_id:e2,work_kind:'leave'}]) await assert.rejects(()=>save([change('lessons',work(extra))]));
@@ -59,5 +68,35 @@ assert.equal((await db.query('select count(*)::int n from public.lessons where s
 const inactive=id();await save([change('employees',{id:inactive,name:'Inactive',active:false})]);
 await assert.rejects(()=>save([change('lessons',work({employee_id:inactive,status:'cancelled',reason:'test'}))]));
 await assert.rejects(()=>save([change('lessons',work({support_employee_ids:[inactive],status:'cancelled',reason:'test'}))]));
-console.log('PASS migrations 001–009, participants, overlap, profile assignment, read/report/create permissions and atomic rollback');
+
+// Combined service persists one session, roles and all participants through reloads.
+const combined=work({work_kind:'consultation_therapy',student_id:student,location_id:room,support_employee_ids:[e2],participant_roles:{[e1]:'consultation',[e2]:'therapy'},starts_at:'2026-11-20T08:00:00+07:00',ends_at:'2026-11-20T09:00:00+07:00'});
+await save([change('lessons',combined)]);
+let stored=(await db.query('select * from public.lessons where id=$1',[combined.id])).rows[0];
+assert.deepEqual(stored.participant_roles,combined.participant_roles);assert.deepEqual(stored.support_employee_ids,[e2]);
+await save([change('lessons',{...combined,version:stored.version,starts_at:'2026-11-20T09:00:00+07:00',ends_at:'2026-11-20T10:00:00+07:00'})]);
+stored=(await db.query('select * from public.lessons where id=$1',[combined.id])).rows[0];
+assert.deepEqual(stored.support_employee_ids,[e2]);assert.deepEqual(stored.participant_roles,combined.participant_roles);
+for(const patch of [{participant_roles:{}},{participant_roles:{[e1]:'therapy',[e2]:'invalid'}},{participant_roles:{[e1]:'therapy',[e3]:'therapy'}},{student_id:null},{location_id:null},{bm:true}])await assert.rejects(()=>save([change('lessons',{...combined,...patch,id:id(),status:'cancelled',reason:'test'})]));
+await assert.rejects(()=>save([change('lessons',work({employee_id:e2,starts_at:stored.starts_at,ends_at:stored.ends_at}))]));
+await login(user);
+assert.ok((await db.query('select public.employee_workspace() w')).rows[0].w.lessons.some(l=>l.id===combined.id));
+assert.deepEqual((await db.query("select * from public.employee_calendar_v4('2026-11-20','2026-11-21')")).rows.find(l=>l.id===combined.id).participant_roles,combined.participant_roles);
+await assert.rejects(()=>db.query("select public.update_my_work($1,$2,'submit','No')",[combined.id,stored.version]));
+await login(ownerUser);
+await assert.rejects(()=>db.query("select public.update_my_work($1,$2,'submit','No')",[combined.id,stored.version]));
+const own={...combined,id:id(),version:0,support_employee_ids:[],participant_roles:{[e1]:'therapy'},starts_at:'2026-11-21T08:00:00+07:00',ends_at:'2026-11-21T09:00:00+07:00'};
+await db.query('select public.employee_create_work($1::jsonb)',[JSON.stringify([own])]);
+await db.query("select public.update_my_work($1,1,'submit','Own report')",[own.id]);
+await login(admin);
+await db.query("select public.update_my_work($1,$2,'submit','Admin report')",[combined.id,stored.version]);
+// Parent projection includes only public schedule fields and the roles of their child's session.
+const parent=id(),parentUser=id();await save([change('parents',{id:parent,name:'Parent'}),change('families',{id:id(),student_id:student,parent_id:parent,relationship:'Mẹ'})]);
+await db.exec('reset role');await db.query("insert into public.invitations(email,role,parent_id) values('parent10@test.com','parents',$1)",[parent]);
+await db.query("insert into auth.users(id,email,email_confirmed_at) values($1,'parent10@test.com',now())",[parentUser]);
+await login(parentUser);
+const pw=(await db.query('select public.parent_workspace() w')).rows[0].w;
+const pl=pw.lessons.find(l=>l.id===combined.id);assert.ok(pl);assert.deepEqual(pl.participant_roles,combined.participant_roles);assert.equal(pl.report_content,undefined);assert.ok(pw.employees.some(e=>e.id===e2));
+console.log('PASS combined roles, edit/reload, validation, conflicts, staff and parent projections, single-person creation and reporting');
+console.log('PASS migrations 001–010, participants, overlap, profile assignment, read/report/create permissions and atomic rollback');
 await db.close();

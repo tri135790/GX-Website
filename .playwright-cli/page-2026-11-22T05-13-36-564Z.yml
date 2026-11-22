@@ -1,0 +1,258 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - img "Gánh Xiếc – Bênh vực tự kỉ" [ref=e7]
+    - navigation "Điều hướng chính" [ref=e8]:
+      - button "Lịch làm việc" [ref=e9] [cursor=pointer]
+      - button "Nhân sự" [ref=e12] [cursor=pointer]
+      - button "Hồ sơ" [ref=e18] [cursor=pointer]
+      - button "Tài khoản" [ref=e21] [cursor=pointer]
+      - button "Cài đặt" [ref=e25] [cursor=pointer]
+    - generic [ref=e29]:
+      - button "Trợ giúp" [ref=e30] [cursor=pointer]
+      - generic [ref=e35]:
+        - strong [ref=e36]: Thanh Trí
+        - generic [ref=e37]: tranthanhtrivn@gmail.com
+        - generic [ref=e38]: Quản trị viên
+  - generic [ref=e39]:
+    - generic [ref=e40]:
+      - generic [ref=e41]: Dữ liệu mẫu · Thay đổi chỉ lưu trong phiên này
+      - button "Cấu hình dữ liệu thật" [ref=e42] [cursor=pointer]
+    - main [ref=e43]:
+      - generic [ref=e44]:
+        - heading "Lịch làm việc" [level=1] [ref=e45]
+        - button "Cần xử lý 30" [ref=e594] [cursor=pointer]:
+          - text: Cần xử lý
+          - generic [ref=e47]: "30"
+      - generic [ref=e48]:
+        - generic [ref=e49]:
+          - generic [ref=e50]:
+            - button "Hôm nay" [ref=e51] [cursor=pointer]
+            - button "Trước" [ref=e52] [cursor=pointer]
+            - button "Sau" [ref=e55] [cursor=pointer]
+            - strong [ref=e58]: 16 – 22 thg 11, 2026
+          - generic [ref=e59]:
+            - generic [ref=e60]:
+              - button "Ngày" [ref=e61] [cursor=pointer]
+              - button "Tuần" [ref=e62] [cursor=pointer]
+              - button "Tháng" [ref=e63] [cursor=pointer]
+              - button "Danh sách" [active] [pressed] [ref=e64] [cursor=pointer]
+            - button "Thêm giờ làm" [ref=e65] [cursor=pointer]
+        - generic [ref=e67]:
+          - combobox "Lọc nhân sự" [ref=e68]:
+            - option "Tất cả nhân sự" [selected]
+            - option "Mai Anh"
+            - option "Hoàng Linh"
+            - option "Thu Hà"
+            - option "Minh Khang"
+          - button "Bộ lọc" [ref=e69] [cursor=pointer]
+        - generic [ref=e71]:
+          - generic [ref=e72]:
+            - generic [ref=e73]:
+              - text: Tổng giờ làm
+              - strong [ref=e74]: 24 giờ
+            - generic [ref=e75]:
+              - text: Tư vấn
+              - strong [ref=e76]: 0 giờ
+            - generic [ref=e77]:
+              - text: Trị liệu
+              - strong [ref=e78]: 0 giờ
+            - generic [ref=e79]:
+              - text: Khác
+              - strong [ref=e80]: 24 giờ
+            - generic [ref=e81]:
+              - text: Trống
+              - strong [ref=e82]: 100 giờ
+              - text: · Vượt 4 giờ
+          - button "Chi tiết giờ làm" [ref=e83] [cursor=pointer]
+        - paragraph [ref=e84]: Có 24 giờ cũ chưa phân loại trong mục Khác.
+        - table [ref=e597]:
+          - rowgroup [ref=e598]:
+            - row [ref=e599]:
+              - columnheader "Time" [ref=e600]
+              - columnheader "Event" [ref=e601]
+          - rowgroup [ref=e602]:
+            - row [ref=e603]:
+              - columnheader "MON 16" [ref=e604]:
+                - generic [ref=e606]:
+                  - generic [ref=e607]: MON
+                  - strong [ref=e608]: "16"
+            - row [ref=e609] [cursor=pointer]:
+              - cell "08:00 - 09:00" [ref=e610]
+              - cell [ref=e611]:
+                - generic "https://meet.google.com/ - An Nhiên - Mai Anh - 08:00–09:00 - Hoàn thành" [ref=e612]:
+                  - generic [ref=e613]: https://meet.google.com/ - An Nhiên - Mai Anh
+                  - generic [ref=e614]: 08:00–09:00
+            - row [ref=e615] [cursor=pointer]:
+              - cell "10:00 - 11:00" [ref=e616]
+              - cell [ref=e617]:
+                - generic "Phòng 2 · Gánh Xiếc - Bảo Nam - Thu Hà - 10:00–11:00 - Hoàn thành" [ref=e618]:
+                  - generic [ref=e619]: Phòng 2 · Gánh Xiếc - Bảo Nam - Thu Hà
+                  - generic [ref=e620]: 10:00–11:00
+            - row [ref=e621] [cursor=pointer]:
+              - cell "14:00 - 15:00" [ref=e622]
+              - cell [ref=e623]:
+                - generic "Phòng 3 · Gánh Xiếc - Gia Huy - Mai Anh - 14:00–15:00 - Hoàn thành" [ref=e624]:
+                  - generic [ref=e625]: Phòng 3 · Gánh Xiếc - Gia Huy - Mai Anh
+                  - generic [ref=e626]: 14:00–15:00
+            - row [ref=e627] [cursor=pointer]:
+              - cell "16:00 - 17:00" [ref=e628]
+              - cell [ref=e629]:
+                - generic "https://meet.google.com/ - Đức Minh - Thu Hà - 16:00–17:00 - Hoàn thành" [ref=e630]:
+                  - generic [ref=e631]: https://meet.google.com/ - Đức Minh - Thu Hà
+                  - generic [ref=e632]: 16:00–17:00
+            - row [ref=e633]:
+              - columnheader "TUE 17" [ref=e634]:
+                - generic [ref=e636]:
+                  - generic [ref=e637]: TUE
+                  - strong [ref=e638]: "17"
+            - row [ref=e639] [cursor=pointer]:
+              - cell "08:00 - 09:00" [ref=e640]
+              - cell [ref=e641]:
+                - generic "https://meet.google.com/ - Minh An - Hoàng Linh - 08:00–09:00 - Hoàn thành" [ref=e642]:
+                  - generic [ref=e643]: https://meet.google.com/ - Minh An - Hoàng Linh
+                  - generic [ref=e644]: 08:00–09:00
+            - row [ref=e645] [cursor=pointer]:
+              - cell "10:00 - 11:00" [ref=e646]
+              - cell [ref=e647]:
+                - generic "Phòng 2 · Gánh Xiếc - Khánh Chi - Minh Khang - 10:00–11:00 - Hoàn thành" [ref=e648]:
+                  - generic [ref=e649]: Phòng 2 · Gánh Xiếc - Khánh Chi - Minh Khang
+                  - generic [ref=e650]: 10:00–11:00
+            - row [ref=e651] [cursor=pointer]:
+              - cell "14:00 - 15:00" [ref=e652]
+              - cell [ref=e653]:
+                - generic "Phòng 3 · Gánh Xiếc - Tuệ Lâm - Hoàng Linh - 14:00–15:00 - Hoàn thành" [ref=e654]:
+                  - generic [ref=e655]: Phòng 3 · Gánh Xiếc - Tuệ Lâm - Hoàng Linh
+                  - generic [ref=e656]: 14:00–15:00
+            - row [ref=e657] [cursor=pointer]:
+              - cell "16:00 - 17:00" [ref=e658]
+              - cell [ref=e659]:
+                - generic "https://meet.google.com/ - Hà My - Minh Khang - 16:00–17:00 - Hoàn thành" [ref=e660]:
+                  - generic [ref=e661]: https://meet.google.com/ - Hà My - Minh Khang
+                  - generic [ref=e662]: 16:00–17:00
+            - row [ref=e663]:
+              - columnheader "WED 18" [ref=e664]:
+                - generic [ref=e666]:
+                  - generic [ref=e667]: WED
+                  - strong [ref=e668]: "18"
+            - row [ref=e669] [cursor=pointer]:
+              - cell "08:00 - 09:00" [ref=e670]
+              - cell [ref=e671]:
+                - generic "https://meet.google.com/ - Bảo Nam - Thu Hà - 08:00–09:00 - Hoàn thành" [ref=e672]:
+                  - generic [ref=e673]: https://meet.google.com/ - Bảo Nam - Thu Hà
+                  - generic [ref=e674]: 08:00–09:00
+            - row [ref=e675] [cursor=pointer]:
+              - cell "10:00 - 11:00" [ref=e676]
+              - cell [ref=e677]:
+                - generic "Phòng 2 · Gánh Xiếc - Gia Huy - Mai Anh - 10:00–11:00 - Hoàn thành" [ref=e678]:
+                  - generic [ref=e679]: Phòng 2 · Gánh Xiếc - Gia Huy - Mai Anh
+                  - generic [ref=e680]: 10:00–11:00
+            - row [ref=e681] [cursor=pointer]:
+              - cell "14:00 - 15:00" [ref=e682]
+              - cell [ref=e683]:
+                - generic "Phòng 3 · Gánh Xiếc - Đức Minh - Thu Hà - 14:00–15:00 - Hoàn thành" [ref=e684]:
+                  - generic [ref=e685]: Phòng 3 · Gánh Xiếc - Đức Minh - Thu Hà
+                  - generic [ref=e686]: 14:00–15:00
+            - row [ref=e687] [cursor=pointer]:
+              - cell "16:00 - 17:00" [ref=e688]
+              - cell [ref=e689]:
+                - generic "https://meet.google.com/ - An Nhiên - Mai Anh - 16:00–17:00 - Hoàn thành" [ref=e690]:
+                  - generic [ref=e691]: https://meet.google.com/ - An Nhiên - Mai Anh
+                  - generic [ref=e692]: 16:00–17:00
+            - row [ref=e693]:
+              - columnheader "THU 19" [ref=e694]:
+                - generic [ref=e696]:
+                  - generic [ref=e697]: THU
+                  - strong [ref=e698]: "19"
+            - row [ref=e699] [cursor=pointer]:
+              - cell "08:00 - 09:00" [ref=e700]
+              - cell [ref=e701]:
+                - generic "https://meet.google.com/ - Khánh Chi - Minh Khang - 08:00–09:00 - Hoàn thành" [ref=e702]:
+                  - generic [ref=e703]: https://meet.google.com/ - Khánh Chi - Minh Khang
+                  - generic [ref=e704]: 08:00–09:00
+            - row [ref=e705] [cursor=pointer]:
+              - cell "10:00 - 11:00" [ref=e706]
+              - cell [ref=e707]:
+                - generic "Phòng 2 · Gánh Xiếc - Tuệ Lâm - Hoàng Linh - 10:00–11:00 - Hoàn thành" [ref=e708]:
+                  - generic [ref=e709]: Phòng 2 · Gánh Xiếc - Tuệ Lâm - Hoàng Linh
+                  - generic [ref=e710]: 10:00–11:00
+            - row [ref=e711] [cursor=pointer]:
+              - cell "14:00 - 15:00" [ref=e712]
+              - cell [ref=e713]:
+                - generic "Phòng 3 · Gánh Xiếc - Hà My - Minh Khang - 14:00–15:00 - Hoàn thành" [ref=e714]:
+                  - generic [ref=e715]: Phòng 3 · Gánh Xiếc - Hà My - Minh Khang
+                  - generic [ref=e716]: 14:00–15:00
+            - row [ref=e717] [cursor=pointer]:
+              - cell "16:00 - 17:00" [ref=e718]
+              - cell [ref=e719]:
+                - generic "https://meet.google.com/ - Minh An - Hoàng Linh - 16:00–17:00 - Hoàn thành" [ref=e720]:
+                  - generic [ref=e721]: https://meet.google.com/ - Minh An - Hoàng Linh
+                  - generic [ref=e722]: 16:00–17:00
+            - row [ref=e723]:
+              - columnheader "FRI 20" [ref=e724]:
+                - generic [ref=e726]:
+                  - generic [ref=e727]: FRI
+                  - strong [ref=e728]: "20"
+            - row [ref=e729] [cursor=pointer]:
+              - cell "08:00 - 09:00" [ref=e730]
+              - cell [ref=e731]:
+                - generic "https://meet.google.com/ - Gia Huy - Mai Anh - 08:00–09:00 - Hoàn thành" [ref=e732]:
+                  - generic [ref=e733]: https://meet.google.com/ - Gia Huy - Mai Anh
+                  - generic [ref=e734]: 08:00–09:00
+            - row [ref=e735] [cursor=pointer]:
+              - cell "10:00 - 11:00" [ref=e736]
+              - cell [ref=e737]:
+                - generic "Phòng 2 · Gánh Xiếc - Đức Minh - Thu Hà - 10:00–11:00 - Hoàn thành" [ref=e738]:
+                  - generic [ref=e739]: Phòng 2 · Gánh Xiếc - Đức Minh - Thu Hà
+                  - generic [ref=e740]: 10:00–11:00
+            - row [ref=e741] [cursor=pointer]:
+              - cell "14:00 - 15:00" [ref=e742]
+              - cell [ref=e743]:
+                - generic "Phòng 3 · Gánh Xiếc - An Nhiên - Mai Anh - 14:00–15:00 - Hoàn thành" [ref=e744]:
+                  - generic [ref=e745]: Phòng 3 · Gánh Xiếc - An Nhiên - Mai Anh
+                  - generic [ref=e746]: 14:00–15:00
+            - row [ref=e747] [cursor=pointer]:
+              - cell "16:00 - 17:00" [ref=e748]
+              - cell [ref=e749]:
+                - generic "https://meet.google.com/ - Bảo Nam - Thu Hà - 16:00–17:00 - Hoàn thành" [ref=e750]:
+                  - generic [ref=e751]: https://meet.google.com/ - Bảo Nam - Thu Hà
+                  - generic [ref=e752]: 16:00–17:00
+            - row [ref=e753]:
+              - columnheader "SAT 21" [ref=e754]:
+                - generic [ref=e756]:
+                  - generic [ref=e757]: SAT
+                  - strong [ref=e758]: "21"
+            - row [ref=e759] [cursor=pointer]:
+              - cell "08:00 - 09:00" [ref=e760]
+              - cell [ref=e761]:
+                - generic "https://meet.google.com/ - Tuệ Lâm - Hoàng Linh - 08:00–09:00 - Hoàn thành" [ref=e762]:
+                  - generic [ref=e763]: https://meet.google.com/ - Tuệ Lâm - Hoàng Linh
+                  - generic [ref=e764]: 08:00–09:00
+            - row [ref=e765] [cursor=pointer]:
+              - cell "10:00 - 11:00" [ref=e766]
+              - cell [ref=e767]:
+                - generic "Phòng 2 · Gánh Xiếc - Hà My - Minh Khang - 10:00–11:00 - Hoàn thành" [ref=e768]:
+                  - generic [ref=e769]: Phòng 2 · Gánh Xiếc - Hà My - Minh Khang
+                  - generic [ref=e770]: 10:00–11:00
+            - row [ref=e771] [cursor=pointer]:
+              - cell "14:00 - 15:00" [ref=e772]
+              - cell [ref=e773]:
+                - generic "Phòng 3 · Gánh Xiếc - Minh An - Hoàng Linh - 14:00–15:00 - Hoàn thành" [ref=e774]:
+                  - generic [ref=e775]: Phòng 3 · Gánh Xiếc - Minh An - Hoàng Linh
+                  - generic [ref=e776]: 14:00–15:00
+            - row [ref=e777] [cursor=pointer]:
+              - cell "16:00 - 17:00" [ref=e778]
+              - cell [ref=e779]:
+                - generic "https://meet.google.com/ - Khánh Chi - Minh Khang - 16:00–17:00 - Hoàn thành" [ref=e780]:
+                  - generic [ref=e781]: https://meet.google.com/ - Khánh Chi - Minh Khang
+                  - generic [ref=e782]: 16:00–17:00
+            - row [ref=e783]:
+              - columnheader "SUN 22" [ref=e784]:
+                - generic [ref=e786]:
+                  - generic [ref=e787]: SUN
+                  - strong [ref=e788]: "22"
+            - row [ref=e789] [cursor=pointer]:
+              - cell "08:00 - 09:00" [ref=e790]
+              - cell [ref=e791]:
+                - generic "NƯƠNG - An Nhiên - Mai Anh, Hoàng Linh - 08:00–09:00 - Đã lên lịch" [ref=e792]:
+                  - generic [ref=e793]: NƯƠNG - An Nhiên - Mai Anh, Hoàng Linh
+                  - generic [ref=e794]: 08:00–09:00

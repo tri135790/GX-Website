@@ -53,3 +53,14 @@ test('meeting hours accrue to every participant while calendar duration stays si
  assert.equal(overlaps(meeting,{...meeting,id:'other',employee_id:'e2',support_employee_ids:[],work_kind:'leave'}),true);
  assert.equal(overlaps(meeting,{...meeting,id:'other',starts_at:meeting.ends_at,ends_at:'2026-11-02T10:00:00+07:00'}),false);
 });
+
+test('combined roles count each employee once and student service categories without doubling total',()=>{
+ const combined:Lesson={...l,work_kind:'consultation_therapy',location_id:'room',support_employee_ids:['e2'],participant_roles:{e1:'consultation',e2:'therapy'},status:'completed',actual_minutes:60};
+ assert.equal(totals([combined],'e1').consultation,60);assert.equal(totals([combined],'e1').therapy,0);
+ assert.equal(totals([combined],'e2').therapy,60);assert.equal(totals([combined],'e2').consultation,0);
+ assert.equal(totals([combined]).actual,60);assert.equal(totals([combined]).therapy,60);assert.equal(totals([combined]).consultation,60);
+ assert.equal(totals([{...combined,participant_roles:{e1:'therapy',e2:'therapy'}}]).therapy,60);
+ validateLesson(combined,[]);
+ for(const patch of [{participant_roles:{}},{participant_roles:{e1:'therapy'}},{participant_roles:{e1:'therapy',e3:'therapy'}},{student_id:''}])assert.throws(()=>validateLesson({...combined,...patch} as Lesson,[]));
+ assert.equal(overlaps(combined,{...l,id:'other',employee_id:'e2',student_id:'other'}),true);
+});
