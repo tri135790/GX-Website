@@ -14,7 +14,7 @@ export function AppShell({ page, go, user, demo, help, setup, logout, children }
     logout: () => void;
     children: React.ReactNode;
 }) {
-    const items = user?.role === 'parents' ? [['calendar', 'Lịch của con', CalendarDays], ['weekly', 'Tiến trình & cập nhật', GraduationCap]] as const : user?.role === 'employee' ? [['calendar', 'Lịch làm việc', CalendarDays], ['students', 'Phụ trách', GraduationCap],['teachers','Giáo viên khách hàng',Users]] as const : adminItems;
+    const items = user?.role === 'parents' ? [['calendar', 'Lịch của con', CalendarDays], ['weekly', 'Hồ sơ học sinh', GraduationCap]] as const : user?.role === 'employee' ? [['calendar', 'Lịch làm việc', CalendarDays], ['students', 'Phụ trách', GraduationCap],['teachers','Giáo viên khách hàng',Users]] as const : adminItems;
     const [open, setOpen] = useState(false), [narrow, setNarrow] = useState(false);
     const sidebar = useRef<HTMLElement>(null), menu = useRef<HTMLButtonElement>(null);
     useEffect(() => { const media = window.matchMedia('(max-width:900px)'); const update = () => { setNarrow(media.matches); if (!media.matches)

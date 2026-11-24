@@ -37,7 +37,7 @@ Xem [hướng dẫn deploy đầy đủ](docs/DEPLOY.md), gồm cả domain gố
 - Lặp theo các ngày trong tuần, tối đa một năm mỗi lần tạo. Thay đổi riêng một buổi hoặc các buổi chưa hoàn thành tiếp theo trong chuỗi, lưu nguyên tử.
 - Giờ kế hoạch không gồm buổi hủy; giờ thực dạy chỉ gồm hoàn thành. Vắng tính 0 thực dạy. Thay đổi thời lượng cần lý do.
 - Tạo/sửa/ngừng hoạt động employee/student/parent; phân công chính/phối hợp; gia đình nhiều–nhiều.
-- Mục tiêu, nhật ký từng buổi và bản tổng hợp theo tuần. Snapshot mục tiêu độc lập giữa các tuần.
+- Hồ sơ học sinh gồm Thông tin, Tiến trình, Báo cáo, Đánh giá và Phụ huynh; lưu ý tuần/báo cáo tư vấn chia sẻ ngay, ATEC/Stress lưu lịch sử bất biến. Nhật ký và Bài tập đang chờ triển khai.
 - Lời mời qua server, role trong database, chống ghi đè bằng version, audit cho mọi thay đổi, bảo vệ admin cuối cùng.
 
 ## Kiểm tra
@@ -57,3 +57,5 @@ Tách project thử nghiệm và production. Chọn chính sách backup phù h�
 Bản đầu tải toàn bộ dữ liệu admin theo từng trang 1.000 hàng; phù hợp triển khai ban đầu. Khi dữ liệu lớn, chuyển lịch/hồ sơ sang truy vấn theo khoảng ngày và phân trang UI trước khi mở rộng sử dụng.
 
 Trang Employee và hướng dẫn cập nhật database: [docs/EMPLOYEE.md](docs/EMPLOYEE.md).
+
+Cập nhật hồ sơ học sinh và đánh giá: [docs/MIGRATION-011.md](docs/MIGRATION-011.md). Áp dụng migration 011 trước frontend mới.

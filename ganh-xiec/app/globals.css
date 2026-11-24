@@ -107,3 +107,23 @@
 .calendar-panel .fc-col-header-cell{background:transparent;padding:0}
 .calendar-panel .fc .calendar-event{border-radius:10px}
 .calendar-panel .fc .fc-timegrid-event .calendar-event-summary,.calendar-panel .fc .fc-timegrid-event .calendar-event small{display:block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;overflow-wrap:normal}
+
+/* Shared student profiles and long assessment forms. */
+.student-profile .tabs { flex-wrap: wrap; }
+.profile-assessments { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+.student-profile .panel, .profile-assessments .panel { min-width: 0; overflow-wrap: anywhere; }
+.assessment-question { border: 1px solid var(--border, #dce5dd); border-radius: 12px; padding: 16px; margin: 16px 0; min-width: 0; }
+.assessment-question legend { font-weight: 600; padding: 0 4px; font-size: 1rem; }
+.assessment-question label { display: flex; align-items: center; gap: 10px; padding: 10px 0; cursor: pointer; font-size: 1rem; }
+.assessment-question input[type=radio] { width: 20px; height: 20px; flex-shrink: 0; }
+.assessment-question[aria-invalid=true] { border-color: #b43e31; }
+.student-profile details > summary { cursor: pointer; font-weight: 600; padding: 8px 0; }
+@media(max-width:700px) { .profile-assessments { grid-template-columns: 1fr; } .student-profile .week-toolbar { flex-wrap: wrap; } }
+.student-profile .panel.panel-body, .profile-assessments .panel.panel-body { padding: 20px; }
+.student-profile .panel.panel-body > h2, .profile-assessments h2 { margin-bottom: 12px; }
+.student-profile .panel.panel-body > p, .profile-assessments p { margin: 10px 0; }
+.student-profile .week-toolbar { justify-content: flex-start; align-items: center; gap: 12px; }
+.student-profile .week-toolbar .field { margin: 0; }
+.assessment-history { padding: 20px; }
+.assessment-history p { margin: 12px 0; line-height: 1.7; }
+@media(max-width:700px) { .student-profile .tabs { row-gap: 0; } }

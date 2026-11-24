@@ -1,0 +1,47 @@
+- main [ref=f2e3]:
+  - generic [ref=f2e4]:
+    - text: Vai trò kiểm thử
+    - combobox "Vai trò kiểm thử" [ref=f2e5]:
+      - option "Phụ huynh" [selected]
+      - option "Nhân sự"
+      - option "Admin"
+  - button "Lỗi mạng lần lưu kế tiếp" [ref=f2e6] [cursor=pointer]
+  - heading "Học sinh kiểm thử" [level=1] [ref=f2e7]
+  - generic [ref=f2e8]:
+    - generic "Mục hồ sơ" [ref=f2e9]:
+      - button "Thông tin" [pressed] [ref=f2e10] [cursor=pointer]
+      - button "Tiến trình" [ref=f2e11] [cursor=pointer]
+      - button "Báo cáo" [ref=f2e12] [cursor=pointer]
+      - button "Đánh giá" [ref=f2e13] [cursor=pointer]
+      - button "Phụ huynh" [ref=f2e14] [cursor=pointer]
+    - generic [ref=f2e15]:
+      - generic [ref=f2e16]:
+        - heading "Thông tin học sinh" [level=2] [ref=f2e17]
+        - paragraph [ref=f2e18]: "Ngày sinh: 01/01/2020 · Ngày bắt đầu: 01/01/2026"
+        - paragraph [ref=f2e19]:
+          - strong [ref=f2e20]: "Ba:"
+          - text: Ba
+        - paragraph [ref=f2e21]:
+          - strong [ref=f2e22]: "Mẹ:"
+          - text: Mẹ
+        - paragraph [ref=f2e23]:
+          - strong [ref=f2e24]: "Điện thoại:"
+          - text: Chưa cập nhật
+        - paragraph [ref=f2e25]:
+          - strong [ref=f2e26]: "Email:"
+          - text: Chưa cập nhật
+        - paragraph [ref=f2e27]:
+          - strong [ref=f2e28]: "Địa chỉ:"
+          - text: Chưa cập nhật
+        - paragraph [ref=f2e29]:
+          - strong [ref=f2e30]: "Chẩn đoán:"
+          - text: Thông tin chẩn đoán
+        - paragraph [ref=f2e31]:
+          - strong [ref=f2e32]: "Viết tắt:"
+          - text: Chưa cập nhật
+        - paragraph [ref=f2e33]:
+          - strong [ref=f2e34]: "Lưu ý hỗ trợ:"
+          - text: Thông tin hỗ trợ đã chia sẻ
+      - generic [ref=f2e35]:
+        - heading "Người phụ trách" [level=2] [ref=f2e36]
+        - paragraph [ref=f2e37]: Tư vấn viên · Phụ trách chính
