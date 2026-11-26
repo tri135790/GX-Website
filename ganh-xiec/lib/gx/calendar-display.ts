@@ -19,3 +19,11 @@ export type CalendarCard = { lesson: Lesson; displayEmployee: string };
 export function calendarCards(lessons: Lesson[], employeeFilter: string): CalendarCard[] {
  return lessons.map(lesson=>({lesson,displayEmployee:lesson.employee_id}));
 }
+
+export type CalendarNames = { students: Map<string, string>; teachers: Map<string, string>; employees: Map<string, string> };
+export function calendarTitle(lesson: Lesson, names: CalendarNames, fallback: string) {
+ if (lesson.work_kind === 'leave') return names.employees.get(lesson.employee_id) || 'Nhân sự';
+ if (lesson.student_id) return names.students.get(lesson.student_id) || 'Học sinh';
+ if (lesson.teacher_ids?.length) return lesson.teacher_ids.map(id => names.teachers.get(id) || 'Giáo viên').join(', ');
+ return fallback;
+}

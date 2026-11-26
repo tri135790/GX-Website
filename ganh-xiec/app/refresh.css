@@ -95,9 +95,6 @@ select {
 .tag.gray { color: #526259; background: #edf1ed; }
 .avatar { width: 40px; height: 40px; font-size: 1rem; }
 .avatar.small { width: 32px; height: 32px; font-size: .8571rem; }
-.calendar-toolbar { padding: 20px; gap: 16px; }
-.calendar-toolbar strong { font-size: 1.1429rem; }
-.calendar-actions { gap: 12px; }
 .segmented { border-radius: 10px; padding: 4px; background: #edf2ec; gap: 4px; }
 .segmented button { border-radius: 7px; min-height: 36px; padding: 7px 12px; font-size: .9286rem; }
 .segmented button.selected { box-shadow: 0 1px 4px #24362f12; color: var(--green); font-weight: 600; }
@@ -105,22 +102,6 @@ select {
 .filters > select { font-size: 1rem; }
 .advanced-filters { padding: 16px 20px; background: #f5f8f2; }
 .advanced-filters label { font-size: 1rem; }
-.calendar-summary { padding: 16px 20px; background: #fbfcf9; font-size: 1rem; }
-.calendar-summary > div { gap: 16px; }
-.calendar-summary strong { font-variant-numeric: tabular-nums; }
-.work-caption { padding: 0 20px; font-size: .9286rem; }
-.calendar-panel .fc .fc-scrollgrid { border-radius: 0; }
-.calendar-panel .fc .fc-timegrid-slot-label-cushion { color: var(--muted); font-size: .9286rem; }
-.calendar-panel .calendar-week-grid .fc .fc-timegrid-slot { height: 36px; }
-.calendar-panel .fc .fc-col-header-cell { background: #fafcf8; }
-.calendar-day-heading { padding: 12px 0; }
-.calendar-day-heading strong { font-size: 1.7143rem; }
-.calendar-panel .fc .fc-day-today .calendar-day-heading strong { color: var(--green); }
-.calendar-panel .fc .month-vertical-event .calendar-event strong { font-size: .9286rem; }
-.calendar-panel .fc .month-vertical-event .calendar-event small { font-size: .8571rem; }
-.calendar-panel .calendar-week-grid .fc .calendar-event small { font-size: .8571rem; }
-.calendar-panel .fc .fc-list-day-cushion { background: #edf4ea; }
-.calendar-panel .fc .fc-list-event:hover td { background: #f4f8f1; }
 .hours-summary { border: 1px solid var(--line); border-radius: 10px; background: #f3f7ef; padding: 20px; gap: 20px; }
 .hours-summary small { font-size: .9286rem; }
 .hours-summary strong { font-size: 1.7143rem; font-variant-numeric: tabular-nums; }
@@ -206,7 +187,6 @@ tbody tr:hover { background: #fafcf8; }
   .sidebar { width: 210px; }
   .main-shell { margin-left: 210px; }
   .content { padding: 24px; }
-  .calendar-toolbar strong { font-size: 1rem; }
 }
 @media (max-width: 900px) {
   .sidebar { width: 256px; max-width: calc(100vw - 48px); padding: 24px 16px 0; }
@@ -226,22 +206,12 @@ tbody tr:hover { background: #fafcf8; }
   .text-button, .name-button, .back-button, .help { min-height: 44px; }
   .demo-bar { padding: 12px 16px; gap: 8px; }
   .demo-bar button { white-space: normal; min-height: 44px; text-align: left; }
-  .calendar-toolbar { padding: 16px; }
-  .calendar-toolbar > .row { gap: 4px; }
-  .calendar-actions { flex-wrap: wrap; gap: 12px; }
   .segmented { max-width: 100%; }
   .segmented button { padding: 8px 10px; }
   .filters { padding: 0 16px 16px; gap: 12px; }
   .filters > select { width: 100%; min-width: 0; flex-basis: 100%; }
   .advanced-filters { padding: 16px; }
-  .calendar-summary { padding: 16px; gap: 12px; }
-  .calendar-summary > div { font-size: .9286rem; gap: 12px; }
   /* A manually selected week/month remains readable inside its own scroller. */
-  .calendar-panel .calendar-grid, .calendar-panel .calendar-week-grid { overflow-x: auto; }
-  .calendar-panel .calendar-grid .fc { min-width: 720px; }
-  .calendar-panel .fc .fc-list-event-time { width: 90px; font-size: .9286rem; }
-  .calendar-panel .fc .fc-col-header-cell-cushion { font-size: .8571rem; }
-  .calendar-panel .fc .fc-daygrid-more-link { font-size: .8571rem; }
   .panel-heading, .employee-panel, .history-item, .family-card { padding: 16px; }
   .panel-body { padding: 0 16px 16px; }
   .panel.panel-body { padding-top: 16px; }

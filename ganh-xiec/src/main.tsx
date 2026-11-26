@@ -2,6 +2,7 @@ import { createRoot } from 'react-dom/client';
 import AdminApp from '../components/gx/admin-app';
 import '../app/globals.css';
 import '../app/refresh.css';
+import '../app/calendar.css';
 import { readAuthLink } from '../lib/gx/auth-link';
 import { PasswordPage } from '../components/gx/password-page';
 
