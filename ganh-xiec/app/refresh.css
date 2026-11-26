@@ -155,7 +155,7 @@ tbody tr:hover { background: #fafcf8; }
 .employee-panel { padding: 24px; gap: 16px; }
 .employee-panel .form { padding: 24px 0 0; border-top: 1px solid var(--line); }
 .student-profile .panel.panel-body, .profile-assessments .panel.panel-body { padding: 24px; }
-.student-profile .week-toolbar { flex-wrap: wrap; margin-bottom: 24px; }
+.student-profile .week-toolbar { align-items: flex-end; flex-wrap: wrap; margin-bottom: 24px; }
 .profile-assessments { gap: 24px; }
 .assessment-question { border-radius: var(--radius-panel); padding: 20px; margin: 24px 0; }
 .assessment-question legend { padding: 0 8px; line-height: 1.7; }
