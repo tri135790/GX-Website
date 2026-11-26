@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useId } from 'react';
 import { X, Leaf } from 'lucide-react';
 import type { Table } from '@/lib/gx/types';
 import type { Change } from '@/lib/gx/client';
@@ -29,9 +29,9 @@ export function Modal({ title, subtitle, close, children }: {
     subtitle?: string;
     close: () => void;
     children: React.ReactNode;
-}) { const root = useRef<HTMLDivElement>(null); const closeRef = useRef(close); closeRef.current = close; useEffect(() => { const old = document.activeElement as HTMLElement; root.current?.focus(); const handler = (e: KeyboardEvent) => { if (e.key === 'Escape')
+}) { const titleId = useId(); const subtitleId = useId(); const root = useRef<HTMLDivElement>(null); const closeRef = useRef(close); closeRef.current = close; useEffect(() => { const old = document.activeElement as HTMLElement; const previousOverflow = document.body.style.overflow; document.body.style.overflow = 'hidden'; root.current?.focus(); const handler = (e: KeyboardEvent) => { if (e.key === 'Escape')
     closeRef.current(); if (e.key === 'Tab') {
-    const nodes = root.current?.querySelectorAll<HTMLElement>('button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),a[href],summary');
+    const nodes = root.current?.querySelectorAll<HTMLElement>('button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea:not(:disabled),a[href],summary,[tabindex="0"]');
     if (!nodes?.length)
         return;
     const visible = Array.from(nodes).filter(n => n.getClientRects().length);
@@ -46,7 +46,7 @@ export function Modal({ title, subtitle, close, children }: {
         e.preventDefault();
         first.focus();
     }
-} }; document.addEventListener('keydown', handler); return () => { document.removeEventListener('keydown', handler); old?.focus(); }; }, []); return <div className="overlay" onClick={e => { if (e.target === e.currentTarget)
-    close(); }}><div ref={root} tabIndex={-1} className="modal" role="dialog" aria-modal="true" aria-label={title}><div className="modal-head"><div><h2>{title}</h2>{subtitle && <p>{subtitle}</p>}</div><button className="icon-button" onClick={close} aria-label="Đóng"><X size={20}/></button></div>{children}</div></div>; }
+} }; document.addEventListener('keydown', handler); return () => { document.removeEventListener('keydown', handler); document.body.style.overflow = previousOverflow; if (old?.isConnected) old.focus(); }; }, []); return <div className="overlay" onClick={e => { if (e.target === e.currentTarget)
+    close(); }}><div ref={root} tabIndex={-1} className="modal" role="dialog" aria-modal="true" aria-labelledby={titleId} aria-describedby={subtitle ? subtitleId : undefined}><div className="modal-head"><div><h2 id={titleId}>{title}</h2>{subtitle && <p id={subtitleId}>{subtitle}</p>}</div><button className="icon-button" onClick={close} aria-label="Đóng"><X size={20}/></button></div><div className="modal-body">{children}</div></div></div>; }
 export function Brand() { return <div className="brand"><img className="brand-logo" src={import.meta.env.BASE_URL+'logo.png'} alt="Gánh Xiếc – Bênh vực tự kỉ"/></div>; }
 export function inputTime(s: string) { return localDate(s) + 'T' + timeText(s); }
